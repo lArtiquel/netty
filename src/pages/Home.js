@@ -3,8 +3,8 @@ import Container from '@material-ui/core/Container';
 import { makeStyles } from '@material-ui/styles';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import VpnKeyIcon from '@material-ui/icons/VpnKey';
-import Icon from '@material-ui/core/Icon';
+import SignIn from '../components/SignIn';
+import SignUp from '../components/SignUp';
 
 const useStyles = makeStyles({
   smallContainer: {
@@ -34,18 +34,15 @@ export default function Home() {
         <Typography color='secondary' variant='h5' gutterBottom>
           Your next <br /> best <br /> social app. <br /> So,
         </Typography>
-        <Button
-          color='primary'
-          variant='contained'
-          startIcon={<Icon>VpnKeyIcon</Icon>}>
-          Sign In
-        </Button>
+        <div className={customStyles.smallContainer}>
+          <SignIn />
+        </div>
         <Typography color='secondary' variant='h5' gutterBottom>
           Or
         </Typography>
-        <Button color='primary' variant='contained'>
-          Sign Up
-        </Button>
+        <div className={customStyles.smallContainer}>
+          <SignUp />
+        </div>
       </Container>
     </div>
   );
