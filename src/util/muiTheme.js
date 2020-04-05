@@ -25,14 +25,16 @@ export const muiTheme = responsiveFontSizes(
       },
       largeWrapper: {
         margin: '50px 150px',
-        'text-align': 'center',
+        textAlign: 'center',
       },
       icon: {
         display: 'block',
+        marginTop: '5px',
         marginLeft: 'auto',
         marginRight: 'auto',
-        width: 64,
-        height: 64,
+        marginBottom: '5px',
+        maxWidth: 64,
+        maxHeight: 64,
         borderRadius: '50%',
       },
       profileIcon: {
