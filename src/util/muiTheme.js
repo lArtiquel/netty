@@ -2,108 +2,50 @@ import {
   createMuiTheme,
   responsiveFontSizes,
 } from '@material-ui/core/styles';
-import red from '@material-ui/core/colors/red';
 
 export const muiTheme = responsiveFontSizes(
   createMuiTheme({
     palette: {
       type: 'dark',
-      primary: {
-        light: '#33ab9f',
-        main: '#009688',
-        dark: '#00695f',
-        contrastText: '#fff',
-      },
-      secondary: {
-        main: '#d32f2f',
-      },
-      danger: {
-        light: '#33bfff',
-        main: '#00b0ff',
-        dark: '#007bb2',
-        contrastText: '#fff',
-      },
+      primary: { main: '#009688' },
+      secondary: { main: '#d32f2f' },
     },
-    typography: {
-      useNextVariants: true,
-    },
-    form: {
-      textAlign: 'center',
-    },
-    image: {
-      margin: '20px auto 20px auto',
-    },
-    pageTitle: {
-      margin: '10px auto 10px auto',
-    },
-    textField: {
-      margin: '10px auto 10px auto',
-    },
-    customError: {
-      color: 'red',
-      fontSize: '0.8rem',
-      marginTop: 10,
-    },
-    progress: {
-      position: 'absolute',
-    },
-    invisibleSeparator: {
-      border: 'none',
-      margin: 4,
-    },
-    visibleSeparator: {
-      width: '100%',
-      borderBottom: '1px solid rgba(0,0,0,0.1)',
-      marginBottom: 20,
-    },
-    paper: {
-      padding: 20,
-    },
-    container: {
-      margin: '40px 0 0 0',
-      display: 'inline-block',
-      'text-align': 'center',
-    },
-    profile: {
-      '& .image-wrapper': {
-        textAlign: 'center',
-        position: 'relative',
-        '& button': {
-          position: 'absolute',
-          top: '80%',
-          left: '70%',
+    spreddable: {
+      wrapper: {
+        mini: {
+          margin: '10px 30px',
+          textAlign: 'center',
+        },
+        small: {
+          margin: '20px 60px',
+          textAlign: 'center',
+        },
+        medium: {
+          margin: '30px 90px',
+          textAlign: 'center',
+        },
+        large: {
+          margin: '50px 150px',
+          textAlign: 'center',
         },
       },
-      '& .profile-image': {
-        width: 200,
-        height: 200,
-        objectFit: 'cover',
-        maxWidth: '100%',
-        borderRadius: '50%',
-      },
-      '& .profile-details': {
-        textAlign: 'center',
-        '& span, svg': {
-          verticalAlign: 'middle',
+      img: {
+        icon: {
+          display: 'block',
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          width: 64,
+          height: 64,
+          borderRadius: '50%',
         },
-        '& a': {
-          color: '#00bcd4',
+        profileIcon: {
+          display: 'block',
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          maxWidth: '200px',
+          maxHeight: '200px',
+          borderRadius: '50%',
         },
-      },
-      '& hr': {
-        border: 'none',
-        margin: '0 0 10px 0',
-      },
-      '& svg.button': {
-        '&:hover': {
-          cursor: 'pointer',
-        },
-      },
-    },
-    buttons: {
-      textAlign: 'center',
-      '& a': {
-        margin: '20px 10px',
       },
     },
   })
