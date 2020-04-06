@@ -5,13 +5,14 @@ import { muiTheme } from './util/muiTheme';
 import PageTemplate from './pages/PageTemplate';
 import Home from './pages/Home';
 import Profile from './pages/Profile';
+import Messages from './pages/Messages';
 
 function App() {
   return (
     <ThemeProvider theme={muiTheme}>
       <CssBaseline />
       <PageTemplate page='Profile'>
-        <Profile />
+        <Messages />
       </PageTemplate>
     </ThemeProvider>
   );

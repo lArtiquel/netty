@@ -5,7 +5,6 @@ import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import List from '@material-ui/core/List';
-import CssBaseline from '@material-ui/core/CssBaseline';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
@@ -97,13 +96,12 @@ export default function MiniDrawer({ page, children }) {
 
   return (
     <div className={styles.root}>
-      <CssBaseline />
       <AppBar
         position='fixed'
         className={clsx(styles.appBar, {
           [styles.appBarShift]: open,
         })}>
-        <Toolbar>
+        <Toolbar id='back-to-top-anchor'>
           <IconButton
             color='inherit'
             aria-label='open drawer'
