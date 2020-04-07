@@ -17,12 +17,14 @@ import ExitToAppRoundedIcon from '@material-ui/icons/ExitToAppRounded';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import MenuIcon from '@material-ui/icons/Menu';
 
-const drawerWidth = 240;
+const drawerWidth = 220;
 
 const useStyles = makeStyles((theme) => ({
   ...theme.spreddable,
   root: {
     display: 'flex',
+    height: '100%',
+    width: '100%',
   },
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
@@ -78,11 +80,20 @@ const useStyles = makeStyles((theme) => ({
   },
   content: {
     flexGrow: 1,
-    padding: theme.spacing(3),
+    marginTop: theme.spacing(8),
+    height: `calc(100% - ${theme.spacing(8)}px)`,
+    overflow: 'hidden',
+  },
+  nettyIcon: {
+    display: 'block',
+    margin: '5px auto 5px 65px',
+    maxWidth: 64,
+    maxHeight: 64,
+    borderRadius: '50%',
   },
 }));
 
-export default function MiniDrawer({ page, children }) {
+export default function PageTemplate({ page, children }) {
   const styles = useStyles();
   const [open, setOpen] = React.useState(false);
 
@@ -131,7 +142,7 @@ export default function MiniDrawer({ page, children }) {
         }}>
         <div className={styles.toolbar}>
           <img
-            className={styles.icon}
+            className={styles.nettyIcon}
             alt='Netty'
             src={process.env.PUBLIC_URL + 'img/netty.png'}
           />
@@ -164,10 +175,7 @@ export default function MiniDrawer({ page, children }) {
           </ListItem>
         </List>
       </Drawer>
-      <main className={styles.content}>
-        <div className={styles.toolbar} />
-        {children}
-      </main>
+      <main className={styles.content}>{children}</main>
     </div>
   );
 }

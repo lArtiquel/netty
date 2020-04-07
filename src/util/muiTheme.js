@@ -27,16 +27,6 @@ export const muiTheme = responsiveFontSizes(
         margin: '50px 150px',
         textAlign: 'center',
       },
-      icon: {
-        display: 'block',
-        marginTop: '5px',
-        marginLeft: 'auto',
-        marginRight: 'auto',
-        marginBottom: '5px',
-        maxWidth: 64,
-        maxHeight: 64,
-        borderRadius: '50%',
-      },
       profileIcon: {
         display: 'block',
         marginLeft: 'auto',
