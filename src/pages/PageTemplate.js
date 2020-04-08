@@ -112,7 +112,7 @@ export default function PageTemplate({ page, children }) {
         className={clsx(styles.appBar, {
           [styles.appBarShift]: open,
         })}>
-        <Toolbar id='back-to-top-anchor'>
+        <Toolbar>
           <IconButton
             color='inherit'
             aria-label='open drawer'

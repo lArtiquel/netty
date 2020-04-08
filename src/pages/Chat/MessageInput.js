@@ -9,12 +9,12 @@ export default function MessageInput() {
     <Box
       display='flex'
       alignItems='center'
-      px={1}
+      px={2}
       py={1}
       border={1}
       borderColor='primary.light'
       borderRadius={8}>
-      <Box flexGrow={1} position='left' mr={1}>
+      <Box flexGrow={1} position='left' mr={3}>
         <TextField
           id='messageInput'
           type='text'

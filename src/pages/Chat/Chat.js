@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
       overflow: 'auto',
     },
     '& .messageInput': {
-      margin: '10px 20px 20px 20px',
+      margin: '10px 20px 10px 20px',
       flex: '0 1 auto',
     },
   },
