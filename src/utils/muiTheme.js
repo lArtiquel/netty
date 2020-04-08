@@ -27,14 +27,6 @@ export const muiTheme = responsiveFontSizes(
         margin: '50px 150px',
         textAlign: 'center',
       },
-      profileIcon: {
-        display: 'block',
-        marginLeft: 'auto',
-        marginRight: 'auto',
-        maxWidth: '200px',
-        maxHeight: '200px',
-        borderRadius: '50%',
-      },
     },
   })
 );

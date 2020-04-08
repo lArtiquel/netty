@@ -4,7 +4,7 @@ import { ThemeProvider } from '@material-ui/core/styles';
 import { muiTheme } from './util/muiTheme';
 import PageTemplate from './pages/PageTemplate';
 import Home from './pages/Home';
-import Profile from './pages/Profile';
+import Profile from './pages/Profile/Profile';
 import Chat from './pages/Chat/Chat';
 
 function App() {
@@ -12,7 +12,7 @@ function App() {
     <ThemeProvider theme={muiTheme}>
       <CssBaseline />
       <PageTemplate page='Profile'>
-        <Chat />
+        <Profile />
       </PageTemplate>
     </ThemeProvider>
   );
