@@ -19,25 +19,20 @@ export default function SignIn() {
 
   return (
     <div>
-      <Button
-        color='primary'
-        variant='contained'
-        onClick={handleClickOpen}>
+      <Button color='primary' variant='contained' onClick={handleClickOpen}>
         > Sign In
       </Button>
       <Dialog
         open={open}
         onClose={handleClose}
         aria-labelledby='form-dialog-title'>
-        <DialogTitle id='form-dialog-title'>
-          Please, Sign In
-        </DialogTitle>
+        <DialogTitle id='form-dialog-title'>Please, Sign In</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
             margin='dense'
-            id='username'
-            label='Username'
+            id='email'
+            label='Email'
             type='email'
             fullWidth
             required
@@ -52,16 +47,10 @@ export default function SignIn() {
           />
         </DialogContent>
         <DialogActions>
-          <Button
-            variant='contained'
-            onClick={handleClose}
-            color='secondary'>
+          <Button variant='contained' onClick={handleClose} color='secondary'>
             Cancel
           </Button>
-          <Button
-            variant='contained'
-            onClick={handleClose}
-            color='primary'>
+          <Button variant='contained' onClick={handleClose} color='primary'>
             Sign In
           </Button>
         </DialogActions>
