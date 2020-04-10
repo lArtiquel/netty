@@ -1,5 +1,16 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using the [Redux](https://redux.js.org/) and [Redux Toolkit](https://redux-toolkit.js.org/) template.
 
+## npm packages
+```
+    npm install react
+    npm install redux
+    npm install redux-thunk
+    npm install firebase
+    npm install react-redux-firebase
+    npm install react-firestore
+```
+
+
 ## Available Scripts
 
 In the project directory, you can run:
