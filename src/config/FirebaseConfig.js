@@ -6,7 +6,7 @@ const firebaseConfig = {
   storageBucket: 'netty-chat.appspot.com',
   messagingSenderId: '615778194059',
   appId: '1:615778194059:web:53c60205c0a54dafae7a8e',
-  measurementId: 'G-NKGE441Y57',
-};
+  measurementId: 'G-NKGE441Y57'
+}
 
-export default firebaseConfig;
+export default firebaseConfig

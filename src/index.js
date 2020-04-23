@@ -1,24 +1,28 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import { Provider } from 'react-redux';
-import store from './store/store';
-import { createFirestoreInstance } from 'redux-firestore';
-import { ReactReduxFirebaseProvider } from 'react-redux-firebase';
-import firebaseConfig from './config/FirebaseConfig';
-import firebase from 'firebase/app';
-import * as serviceWorker from './serviceWorker';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import './index.css'
+import { Provider } from 'react-redux'
+import { createFirestoreInstance } from 'redux-firestore'
+import { ReactReduxFirebaseProvider } from 'react-redux-firebase'
+import firebase from 'firebase/app'
+import firebaseConfig from './config/FirebaseConfig'
+import store from './store/store'
+import App from './App'
+import * as serviceWorker from './serviceWorker'
 
 // Initialize firebase instance
-firebase.initializeApp(fbConfig);
+firebase.initializeApp(firebaseConfig)
+// Initialize other services on firebase instance
+// firebase.firestore() // <- needed if using firestore
+// firebase.functions() // <- needed if using httpsCallable
 
+// react-redux-firebase config
 const RRBProps = {
   firebase,
   config: firebaseConfig,
   dispatch: store.dispatch,
-  createFirestoreInstance,
-};
+  createFirestoreInstance
+}
 
 ReactDOM.render(
   <Provider store={store}>
@@ -27,9 +31,9 @@ ReactDOM.render(
     </ReactReduxFirebaseProvider>
   </Provider>,
   document.getElementById('root')
-);
+)
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+serviceWorker.unregister()
