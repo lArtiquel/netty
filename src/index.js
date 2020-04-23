@@ -1,14 +1,22 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { BrowserRouter as Router } from 'react-router-dom'
 import './index.css'
-import { Provider } from 'react-redux'
+import { Provider, useSelector } from 'react-redux'
 import { createFirestoreInstance } from 'redux-firestore'
-import { ReactReduxFirebaseProvider } from 'react-redux-firebase'
+import { ReactReduxFirebaseProvider, isLoaded } from 'react-redux-firebase'
 import firebase from 'firebase/app'
 import firebaseConfig from './config/FirebaseConfig'
 import store from './store/store'
 import App from './App'
 import * as serviceWorker from './serviceWorker'
+
+// this function prevents from flickering while firebase auth module loading
+function AuthIsLoaded({ children }) {
+  const auth = useSelector((state) => state.firebase.auth)
+  if (!isLoaded(auth)) return <div>Loading...</div>
+  return children
+}
 
 // Initialize firebase instance
 firebase.initializeApp(firebaseConfig)
@@ -27,7 +35,11 @@ const RRBProps = {
 ReactDOM.render(
   <Provider store={store}>
     <ReactReduxFirebaseProvider {...RRBProps}>
-      <App />
+      <AuthIsLoaded>
+        <Router>
+          <App />
+        </Router>
+      </AuthIsLoaded>
     </ReactReduxFirebaseProvider>
   </Provider>,
   document.getElementById('root')
