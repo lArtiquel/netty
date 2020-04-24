@@ -18,9 +18,12 @@ export const signInAction = (credentials) => {
 
 export const signOutAction = () => {
   return (dispatch, getState) => {
-    firebase.auth.signOut().then(() => {
-      dispatch({ type: AuthConstants.signOutSuccess })
-    })
+    firebase
+      .auth()
+      .signOut()
+      .then(() => {
+        dispatch({ type: AuthConstants.signOutSuccess })
+      })
   }
 }
 

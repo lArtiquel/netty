@@ -1,15 +1,17 @@
 import React from 'react'
+import { withRouter } from 'react-router'
 import Container from '@material-ui/core/Container'
 import { makeStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import SignIn from '../SignIn'
 import SignUp from '../SignUp'
+import { UserIsNotAuthenticated } from '../../utils/AuthHOC'
 
 const useStyles = makeStyles((theme) => ({
   ...theme.spreddable
 }))
 
-export default function Home() {
+const Home = () => {
   const styles = useStyles()
 
   return (
@@ -40,3 +42,5 @@ export default function Home() {
     </div>
   )
 }
+
+export default withRouter(UserIsNotAuthenticated(Home))

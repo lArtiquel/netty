@@ -1,4 +1,5 @@
 import React from 'react'
+import { withRouter } from 'react-router'
 import { makeStyles } from '@material-ui/core/styles'
 import Drawer from '@material-ui/core/Drawer'
 import Hidden from '@material-ui/core/Hidden'
@@ -16,8 +17,10 @@ import ExitToAppRoundedIcon from '@material-ui/icons/ExitToAppRounded'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import MenuIcon from '@material-ui/icons/Menu'
 import { connect } from 'react-redux'
+import { compose } from 'redux'
 import PropTypes from 'prop-types'
 import { signOutAction } from '../../store/actions/authActions'
+import { UserIsAuthenticated } from '../../utils/AuthHOC'
 
 const drawerWidth = 240
 
@@ -168,4 +171,8 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-export default connect(null, mapDispatchToProps)(PageTemplate)
+export default compose(
+  withRouter,
+  UserIsAuthenticated,
+  connect(null, mapDispatchToProps)
+)(PageTemplate)

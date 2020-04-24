@@ -7,8 +7,8 @@ import DialogContent from '@material-ui/core/DialogContent'
 import DialogTitle from '@material-ui/core/DialogTitle'
 import Alert from '@material-ui/lab/Alert'
 import { connect } from 'react-redux'
-import { signInAction } from '../store/actions/authActions'
 import PropTypes from 'prop-types'
+import { signInAction } from '../store/actions/authActions'
 
 function SignIn({ signIn, authError }) {
   const [open, setOpen] = useState(false)
