@@ -27,23 +27,25 @@ const drawerWidth = 240
 const useStyles = makeStyles((theme) => ({
   ...theme.spreddable,
   root: {
-    display: 'flex'
+    display: 'flex',
+    height: '100%',
+    width: '100%'
   },
   drawer: {
-    [theme.breakpoints.up('sm')]: {
+    [theme.breakpoints.up('md')]: {
       width: drawerWidth,
       flexShrink: 0
     }
   },
   appBar: {
-    [theme.breakpoints.up('sm')]: {
+    [theme.breakpoints.up('md')]: {
       width: `calc(100% - ${drawerWidth}px)`,
       marginLeft: drawerWidth
     }
   },
   menuButton: {
     marginRight: theme.spacing(2),
-    [theme.breakpoints.up('sm')]: {
+    [theme.breakpoints.up('md')]: {
       display: 'none'
     }
   },
@@ -54,13 +56,16 @@ const useStyles = makeStyles((theme) => ({
   },
   content: {
     flexGrow: 1,
-    padding: theme.spacing(3)
+    marginTop: theme.spacing(8),
+    padding: theme.spacing(3),
+    height: `calc(100% - ${theme.spacing(8)}px)`,
+    overflow: 'hidden'
   },
   nettyIcon: {
     display: 'block',
     margin: '5px auto 5px auto',
-    maxWidth: 64,
-    maxHeight: 64,
+    maxWidth: 54,
+    maxHeight: 54,
     borderRadius: '50%'
   }
 }))
@@ -127,7 +132,7 @@ const PageTemplate = ({ page, children, signOut }) => {
         </Toolbar>
       </AppBar>
       <nav className={styles.drawer} aria-label="mailbox folders">
-        <Hidden lgUp implementation="css">
+        <Hidden mdUp implementation="css">
           <Drawer
             variant="temporary"
             open={mobileOpen}
@@ -142,7 +147,7 @@ const PageTemplate = ({ page, children, signOut }) => {
             {drawer}
           </Drawer>
         </Hidden>
-        <Hidden mdDown implementation="css">
+        <Hidden smDown implementation="css">
           <Drawer
             classes={{
               paper: styles.drawerPaper
