@@ -7,13 +7,13 @@ import {
   createFirestoreInstance
 } from 'redux-firestore'
 import rootReducer from './reducers/rootReducer'
-import firebase from '../config/FirebaseConfig'
+import firebase, { firebaseConfig } from '../config/FirebaseConfig'
 
 // this allows us to use "users" collection to store user reg info in firestore
 const rrfConfig = {
-  userProfile: 'users',
+  userProfile: 'userInfo',
   useFirestoreForProfile: true,
-  enableClaims: true
+  enableClaims: true // Custom user claims are accessible via user's authentication tokens.
 }
 
 const initialStoreState = {}
@@ -23,7 +23,7 @@ const store = createStore(
   initialStoreState,
   compose(
     applyMiddleware(thunk.withExtraArgument({ getFirebase, getFirestore })),
-    reduxFirestore(firebase, rrfConfig)
+    reduxFirestore(firebase, firebaseConfig)
   )
 )
 

@@ -1,7 +1,7 @@
 import { AuthConstants } from '../../constants/actionConstants'
 
 const initState = {
-  authError: null
+  authError: ''
 }
 
 const authReducer = (state = initState, action) => {
@@ -9,7 +9,7 @@ const authReducer = (state = initState, action) => {
     case AuthConstants.signInSuccess:
       return {
         ...state,
-        authError: null
+        authError: ''
       }
     case AuthConstants.signInError:
       return {
@@ -19,6 +19,21 @@ const authReducer = (state = initState, action) => {
     case AuthConstants.signOutSuccess:
       return {
         ...state
+      }
+    case AuthConstants.signUpSuccess:
+      return {
+        ...state,
+        authError: ''
+      }
+    case AuthConstants.signUpError:
+      return {
+        ...state,
+        authError: action.err.message
+      }
+    case AuthConstants.clearError:
+      return {
+        ...state,
+        authError: ''
       }
     default:
       return {

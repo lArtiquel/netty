@@ -3,10 +3,9 @@ import 'firebase/auth'
 import { AuthConstants } from '../../constants/actionConstants'
 
 export const signInAction = (credentials) => {
-  return (dispatch, getState, db) => {
-    console.log(db.getFirebase())
-    console.log(db.getFirestore())
-    db.getFirebase()
+  return (dispatch, getState, { getFirebase }) => {
+    const firebase = getFirebase()
+    firebase
       .auth()
       .signInWithEmailAndPassword(credentials.email, credentials.password)
       .then(() => {
@@ -19,8 +18,9 @@ export const signInAction = (credentials) => {
 }
 
 export const signOutAction = () => {
-  return (dispatch, getState, db) => {
-    db.getFirebase()
+  return (dispatch, getState, { getFirebase }) => {
+    const firebase = getFirebase()
+    firebase
       .auth()
       .signOut()
       .then(() => {
@@ -29,27 +29,32 @@ export const signOutAction = () => {
   }
 }
 
-// export const signUpAction = (newUser) => {
-//   return (dispatch, getState, firestore) => {
-//     firebase
-//       .auth()
-//       .createUserWithEmailAndPassword(newUser.email, newUser.password)
-//       .then((resp) => {
-//         // this needs to be looked at as it isnt creating a users collection data #lesson 28
-//         return db
-//           .collection('users')
-//           .doc(resp.user.uid)
-//           .set({
-//             firstName: newUser.firstName,
-//             lastName: newUser.lastName,
-//             initials: newUser.firstName[0] + newUser.lastName[0]
-//           })
-//       })
-//       .then(() => {
-//         dispatch({ type: 'SIGNUP_SUCCESS' })
-//       })
-//       .catch((err) => {
-//         dispatch({ type: 'SIGNUP_ERROR', err })
-//       })
-//   }
-// }
+export const signUpAction = (newUser) => {
+  return (dispatch, getState, { getFirebase, getFirestore }) => {
+    const firebase = getFirebase()
+    const firestore = getFirestore()
+
+    firebase
+      .auth()
+      .createUserWithEmailAndPassword(newUser.email, newUser.password)
+      .then((resp) => {
+        return firestore.collection('userInfo').doc(resp.user.uid).set({
+          fname: newUser.fname,
+          sname: newUser.sname,
+          dob: newUser.dob,
+          location: newUser.location,
+          bio: newUser.bio
+        })
+      })
+      .then(() => {
+        dispatch({ type: AuthConstants.signUpSuccess })
+      })
+      .catch((err) => {
+        dispatch({ type: AuthConstants.signUpError, err })
+      })
+  }
+}
+
+export const clearAuthErrorAction = () => {
+  return (dispatch) => dispatch({ type: AuthConstants.clearError })
+}
