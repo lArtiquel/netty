@@ -1,3 +1,5 @@
+import firebaseApp from 'firebase/app'
+
 const firebaseConfig = {
   apiKey: 'AIzaSyBV7ydZBOmuD8atUaq-xwhEgMQhAo1nNZU',
   authDomain: 'netty-chat.firebaseapp.com',
@@ -9,4 +11,10 @@ const firebaseConfig = {
   measurementId: 'G-NKGE441Y57'
 }
 
-export default firebaseConfig
+// Initialize firebase instance
+const firebase = firebaseApp.initializeApp(firebaseConfig)
+// Initialize other services on firebase instance
+// export const firestore = firebase.firestore() // <- needed if using firestore(we don't have to do that cuz we enhancing our redux-thunk store with getFirestore instance)
+// firebase.functions() // <- needed if using httpsCallabl
+
+export default firebase

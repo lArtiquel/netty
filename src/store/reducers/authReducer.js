@@ -9,12 +9,12 @@ const authReducer = (state = initState, action) => {
     case AuthConstants.signInSuccess:
       return {
         ...state,
-        authError: action.err.message
+        authError: null
       }
     case AuthConstants.signInError:
       return {
         ...state,
-        authError: null
+        authError: action.err.message
       }
     case AuthConstants.signOutSuccess:
       return {

@@ -1,5 +1,5 @@
 export const AuthConstants = {
-  signInSuccess: 'LOGIN_SUCCESS',
-  signInError: 'LOGIN_ERROR',
+  signInSuccess: 'SIGNIN_SUCCESS',
+  signInError: 'SIGNIN_ERROR',
   signOutSuccess: 'SIGNOUT_SUCCESS'
 }
