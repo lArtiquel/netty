@@ -19,6 +19,7 @@ import MenuIcon from '@material-ui/icons/Menu'
 import { connect } from 'react-redux'
 import { compose } from 'redux'
 import PropTypes from 'prop-types'
+import { useHistory } from 'react-router-dom'
 import { signOutAction } from '../../store/actions/authActions'
 import { UserIsAuthenticated } from '../../utils/AuthHOC'
 
@@ -69,12 +70,18 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: '50%'
   }
 }))
+
 const PageTemplate = ({ page, children, signOut }) => {
   const styles = useStyles()
   const [mobileOpen, setMobileOpen] = React.useState(false)
+  const history = useHistory()
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen)
+  }
+
+  const navigateTo = (url) => {
+    history.replace(url)
   }
 
   const drawer = (
@@ -88,13 +95,13 @@ const PageTemplate = ({ page, children, signOut }) => {
       </div>
       <Divider />
       <List>
-        <ListItem button key="Profile">
+        <ListItem button key="Profile" onClick={() => navigateTo('/profile')}>
           <ListItemIcon>
             <PersonRoundedIcon />
           </ListItemIcon>
           <ListItemText primary="Profile" />
         </ListItem>
-        <ListItem button key="Messages">
+        <ListItem button key="Messages" onClick={() => navigateTo('/messages')}>
           <ListItemIcon>
             <ForumRoundedIcon />
           </ListItemIcon>
