@@ -9,10 +9,10 @@ export const signInAction = (credentials) => {
       .auth()
       .signInWithEmailAndPassword(credentials.email, credentials.password)
       .then(() => {
-        dispatch({ type: AuthConstants.signInSuccess })
+        dispatch({ type: AuthConstants.SIGNIN_SUCCESS })
       })
       .catch((err) => {
-        dispatch({ type: AuthConstants.signInError, err })
+        dispatch({ type: AuthConstants.SIGNIN_ERROR, err })
       })
   }
 }
@@ -24,7 +24,7 @@ export const signOutAction = () => {
       .auth()
       .signOut()
       .then(() => {
-        dispatch({ type: AuthConstants.signOutSuccess })
+        dispatch({ type: AuthConstants.SIGNOUT_SUCCESS })
       })
   }
 }
@@ -47,14 +47,14 @@ export const signUpAction = (newUser) => {
         })
       })
       .then(() => {
-        dispatch({ type: AuthConstants.signUpSuccess })
+        dispatch({ type: AuthConstants.SIGNUP_SUCCESS })
       })
       .catch((err) => {
-        dispatch({ type: AuthConstants.signUpError, err })
+        dispatch({ type: AuthConstants.SIGNUP_ERROR, err })
       })
   }
 }
 
 export const clearAuthErrorAction = () => {
-  return (dispatch) => dispatch({ type: AuthConstants.clearError })
+  return (dispatch) => dispatch({ type: AuthConstants.CLEAR_ERROR })
 }

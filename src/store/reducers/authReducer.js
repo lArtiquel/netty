@@ -6,31 +6,31 @@ const initState = {
 
 const authReducer = (state = initState, action) => {
   switch (action.type) {
-    case AuthConstants.signInSuccess:
+    case AuthConstants.SIGNIN_SUCCESS:
       return {
         ...state,
         authError: ''
       }
-    case AuthConstants.signInError:
+    case AuthConstants.SIGNIN_ERROR:
       return {
         ...state,
         authError: action.err.message
       }
-    case AuthConstants.signOutSuccess:
+    case AuthConstants.SIGNOUT_SUCCESS:
       return {
         ...state
       }
-    case AuthConstants.signUpSuccess:
+    case AuthConstants.SIGNUP_SUCCESS:
       return {
         ...state,
         authError: ''
       }
-    case AuthConstants.signUpError:
+    case AuthConstants.SIGNUP_ERROR:
       return {
         ...state,
         authError: action.err.message
       }
-    case AuthConstants.clearError:
+    case AuthConstants.CLEAR_ERROR:
       return {
         ...state,
         authError: ''

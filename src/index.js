@@ -14,7 +14,12 @@ function AuthIsLoaded({ children }) {
   const auth = useSelector((state) => state.firebase.auth)
   if (!isLoaded(auth)) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center'
+        }}
+      >
         <CircularProgress />
       </div>
     )

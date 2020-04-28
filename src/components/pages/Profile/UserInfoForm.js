@@ -9,6 +9,7 @@ import { connect } from 'react-redux'
 import { firestoreConnect } from 'react-redux-firebase'
 import PropTypes from 'prop-types'
 import CircularProgress from '@material-ui/core/CircularProgress'
+import { modifyUserInfoAction } from '../../../store/actions/profileActions'
 
 const useStyles = makeStyles((theme) => ({
   ...theme.spreddable,
@@ -31,7 +32,7 @@ const INITIAL_STATE = {
   bio: ''
 }
 
-const UserInfoForm = ({ auth, profileInfo }) => {
+const UserInfoForm = ({ auth, profileInfo, modifyUserInfo }) => {
   const [userInfo, setUserInfo] = useState(INITIAL_STATE)
   const styles = useStyles()
 
@@ -43,7 +44,8 @@ const UserInfoForm = ({ auth, profileInfo }) => {
 
   const applyChanges = (e) => {
     e.preventDefault()
-    // dispatch an action
+    // dispatchin' an Redux action
+    modifyUserInfo(userInfo)
   }
 
   const onChange = (e) => [
@@ -130,7 +132,8 @@ const UserInfoForm = ({ auth, profileInfo }) => {
 
 UserInfoForm.propTypes = {
   auth: PropTypes.object.isRequired,
-  profileInfo: PropTypes.object
+  profileInfo: PropTypes.object,
+  modifyUserInfo: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => {
@@ -140,7 +143,13 @@ const mapStateToProps = (state) => {
   }
 }
 
+const mapActionsToProps = (dispatch) => {
+  return {
+    modifyUserInfo: (newUserInfo) => dispatch(modifyUserInfoAction(newUserInfo))
+  }
+}
+
 export default compose(
-  connect(mapStateToProps),
+  connect(mapStateToProps, mapActionsToProps),
   firestoreConnect(({ auth }) => [{ collection: 'userInfo', doc: auth.uid }])
 )(UserInfoForm)
