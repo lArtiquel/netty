@@ -9,18 +9,27 @@ import { connect } from 'react-redux'
 import { firestoreConnect } from 'react-redux-firebase'
 import PropTypes from 'prop-types'
 import CircularProgress from '@material-ui/core/CircularProgress'
+import IconButton from '@material-ui/core/IconButton'
+import EditIcon from '@material-ui/icons/Edit'
+import Tooltip from '@material-ui/core/Tooltip'
 import { modifyUserInfoAction } from '../../../store/actions/profileActions'
 
 const useStyles = makeStyles((theme) => ({
   ...theme.spreddable,
-  profileIcon: {
+  profileImageWrapper: {
     display: 'block',
     marginLeft: 'auto',
     marginRight: 'auto',
-    maxWidth: '150px',
-    maxHeight: '150px',
+    maxWidth: '140px',
+    maxHeight: '140px',
     borderRadius: '50%',
-    margin: '10px 10px 20px 10px'
+    margin: '10px 10px 20px 10px',
+    position: 'relative',
+    '& .iconButton': {
+      position: 'absolute',
+      top: '80%',
+      left: '70%'
+    }
   }
 }))
 
@@ -55,17 +64,46 @@ const UserInfoForm = ({ auth, profileInfo, modifyUserInfo }) => {
     })
   ]
 
+  const handleImageChange = (event) => {
+    const selectedImage = event.target.files[0]
+    console.log(selectedImage)
+    // const formData = new FormData()
+    // formData.append('image', selectedImage, selectedImage.name)
+    // dispatch an action to upload image on firestore storage
+  }
+
+  const handleEditPicture = () => {
+    const fileInput = document.getElementById('profileImageInput')
+    fileInput.click()
+  }
+
   return (
     <Box my={3}>
       <Paper variant="outlined">
         <Box my={2} mx={3}>
           {profileInfo ? (
             <form onSubmit={applyChanges}>
-              <img
-                src={`${process.env.PUBLIC_URL}img/netty.png`}
-                alt="Here should be a profile pic"
-                className={styles.profileIcon}
-              />
+              <div className={styles.profileImageWrapper}>
+                <img
+                  src={`${process.env.PUBLIC_URL}img/netty.png`}
+                  alt="Here should be a profile pic"
+                />
+                <input
+                  type="file"
+                  hidden="hidden"
+                  id="profileImageInput"
+                  onChange={handleImageChange}
+                  accept="image/*"
+                />
+                <Tooltip title="Change profile picture" placement="top">
+                  <IconButton
+                    onClick={handleEditPicture}
+                    className="iconButton"
+                  >
+                    <EditIcon color="secondary" />
+                  </IconButton>
+                </Tooltip>
+              </div>
               <TextField
                 autoFocus
                 margin="dense"
