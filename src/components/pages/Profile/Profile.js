@@ -5,7 +5,7 @@ import Divider from '@material-ui/core/Divider'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import UserInfoForm from './UserInfoForm'
-import UserCredentialsForm from './UserCredForm'
+import UserCredentialsForm from './UserCredsForm'
 import { closeModalAction } from '../../../store/actions/profileActions'
 import Modal from '../../Modal'
 
@@ -13,9 +13,9 @@ const Profile = ({ modal, closeModal }) => {
   return (
     <Container maxWidth="xs">
       <Box display="flex" flexDirection="column" justifyContent="center" mx={2}>
-        <UserCredentialsForm />
-        <Divider />
         <UserInfoForm />
+        <Divider />
+        <UserCredentialsForm />
         <Divider />
         {modal.isOpen && (
           <Modal

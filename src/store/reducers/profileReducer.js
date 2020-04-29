@@ -23,7 +23,7 @@ const profileReducer = (state = initState, action) => {
       return {
         ...state,
         modal: {
-          open: true,
+          isOpen: true,
           title: 'ERROR',
           message: action.error.message
         }
@@ -32,9 +32,36 @@ const profileReducer = (state = initState, action) => {
       return {
         ...state,
         modal: {
-          open: false,
-          type: '',
+          isOpen: false,
+          title: '',
           message: ''
+        }
+      }
+    case ProfileConstants.PASSWORDS_ARE_NOT_EQUAL:
+      return {
+        ...state,
+        modal: {
+          isOpen: true,
+          title: 'ERROR',
+          message: 'Passwords should be equal!'
+        }
+      }
+    case ProfileConstants.MODIFY_USERCREDS_SUCCESS:
+      return {
+        ...state,
+        modal: {
+          isOpen: true,
+          title: 'SUCCESS',
+          message: 'Yass! User creds successfully changed!'
+        }
+      }
+    case ProfileConstants.MODIFY_USERCREDS_ERROR:
+      return {
+        ...state,
+        modal: {
+          isOpen: true,
+          title: 'ERROR',
+          message: action.error.message
         }
       }
     default:

@@ -27,3 +27,26 @@ export const modifyUserInfoAction = (newUserInfo) => {
 export const closeModalAction = () => {
   return (dispatch) => dispatch({ type: ProfileConstants.CLOSE_MODAL })
 }
+
+export const modifyUserCredsAction = (newUserCreds) => {
+  if (newUserCreds.password !== newUserCreds.cpassword) {
+    return (dispatch) => {
+      dispatch({ type: ProfileConstants.PASSWORDS_ARE_NOT_EQUAL })
+    }
+  }
+
+  return (dispatch, getState, { getFirebase }) => {
+    const firebase = getFirebase()
+    const user = firebase.auth().currentUser
+
+    user
+      .updateEmail(newUserCreds.email)
+      .then(() => user.updatePassword(newUserCreds.password))
+      .then(() => {
+        dispatch({ type: ProfileConstants.MODIFY_USERCREDS_SUCCESS })
+      })
+      .catch((error) => {
+        dispatch({ type: ProfileConstants.MODIFY_USERCREDS_ERROR, error })
+      })
+  }
+}

@@ -60,7 +60,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(8),
     padding: theme.spacing(3),
     height: `calc(100% - ${theme.spacing(8)}px)`,
-    overflow: 'hidden'
+    overflow: 'auto'
   },
   nettyIcon: {
     display: 'block',
