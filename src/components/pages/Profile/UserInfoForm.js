@@ -12,19 +12,24 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 import IconButton from '@material-ui/core/IconButton'
 import EditIcon from '@material-ui/icons/Edit'
 import Tooltip from '@material-ui/core/Tooltip'
-import { modifyUserInfoAction } from '../../../store/actions/profileActions'
+import {
+  modifyUserInfoAction,
+  changeProfileImageAction
+} from '../../../store/actions/profileActions'
 
 const useStyles = makeStyles((theme) => ({
   ...theme.spreddable,
   profileImageWrapper: {
-    display: 'block',
-    marginLeft: 'auto',
-    marginRight: 'auto',
-    maxWidth: '140px',
-    maxHeight: '140px',
-    borderRadius: '50%',
-    margin: '10px 10px 20px 10px',
+    display: 'flex',
     position: 'relative',
+    margin: '10px 10px 20px 10px',
+    '& img': {
+      maxWidth: '200px',
+      maxHeight: '200px',
+      marginLeft: 'auto',
+      marginRight: 'auto',
+      borderRadius: '50%'
+    },
     '& .iconButton': {
       position: 'absolute',
       top: '80%',
@@ -41,7 +46,12 @@ const INITIAL_STATE = {
   bio: ''
 }
 
-const UserInfoForm = ({ auth, profileInfo, modifyUserInfo }) => {
+const UserInfoForm = ({
+  auth,
+  profileInfo,
+  modifyUserInfo,
+  changeProfileImage
+}) => {
   const [userInfo, setUserInfo] = useState(INITIAL_STATE)
   const styles = useStyles()
 
@@ -66,10 +76,8 @@ const UserInfoForm = ({ auth, profileInfo, modifyUserInfo }) => {
 
   const handleImageChange = (event) => {
     const selectedImage = event.target.files[0]
-    console.log(selectedImage)
-    // const formData = new FormData()
-    // formData.append('image', selectedImage, selectedImage.name)
     // dispatch an action to upload image on firestore storage
+    changeProfileImage(selectedImage)
   }
 
   const handleEditPicture = () => {
@@ -84,10 +92,7 @@ const UserInfoForm = ({ auth, profileInfo, modifyUserInfo }) => {
           {profileInfo ? (
             <form onSubmit={applyChanges}>
               <div className={styles.profileImageWrapper}>
-                <img
-                  src={`${process.env.PUBLIC_URL}img/netty.png`}
-                  alt="Here should be a profile pic"
-                />
+                <img src={`${auth.photoURL}`} alt="Profile pic here" />
                 <input
                   type="file"
                   hidden="hidden"
@@ -171,7 +176,8 @@ const UserInfoForm = ({ auth, profileInfo, modifyUserInfo }) => {
 UserInfoForm.propTypes = {
   auth: PropTypes.object.isRequired,
   profileInfo: PropTypes.object,
-  modifyUserInfo: PropTypes.func.isRequired
+  modifyUserInfo: PropTypes.func.isRequired,
+  changeProfileImage: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => {
@@ -183,7 +189,9 @@ const mapStateToProps = (state) => {
 
 const mapActionsToProps = (dispatch) => {
   return {
-    modifyUserInfo: (newUserInfo) => dispatch(modifyUserInfoAction(newUserInfo))
+    modifyUserInfo: (newUserInfo) =>
+      dispatch(modifyUserInfoAction(newUserInfo)),
+    changeProfileImage: (file) => dispatch(changeProfileImageAction(file))
   }
 }
 

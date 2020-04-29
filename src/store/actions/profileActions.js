@@ -1,10 +1,22 @@
 import { ProfileConstants } from '../../constants/actionConstants'
 
 export const modifyUserInfoAction = (newUserInfo) => {
-  return (dispatch, getState, { getFirestore }) => {
+  return (dispatch, getState, { getFirestore, getFirebase }) => {
+    const firebase = getFirebase()
     const firestore = getFirestore()
     const { uid } = getState().firebase.auth
 
+    // updating name in firebase
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        // user is signed in
+        user.updateProfile({
+          displayName: `${newUserInfo.fname} ${newUserInfo.sname}`
+        })
+      }
+    })
+
+    // updating userInfo in firestore
     firestore
       .collection('userInfo')
       .doc(`${uid}`)
@@ -37,16 +49,48 @@ export const modifyUserCredsAction = (newUserCreds) => {
 
   return (dispatch, getState, { getFirebase }) => {
     const firebase = getFirebase()
-    const user = firebase.auth().currentUser
 
-    user
-      .updateEmail(newUserCreds.email)
-      .then(() => user.updatePassword(newUserCreds.password))
-      .then(() => {
-        dispatch({ type: ProfileConstants.MODIFY_USERCREDS_SUCCESS })
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        user
+          .updateEmail(newUserCreds.email)
+          .then(() => user.updatePassword(newUserCreds.password))
+          .then(() => {
+            dispatch({ type: ProfileConstants.MODIFY_USERCREDS_SUCCESS })
+          })
+          .catch((error) => {
+            dispatch({ type: ProfileConstants.MODIFY_USERCREDS_ERROR, error })
+          })
+      }
+    })
+  }
+}
+
+export const changeProfileImageAction = (file) => {
+  return (dispatch, getState, { getFirebase }) => {
+    const state = getState()
+    const firebase = getFirebase()
+    const storage = firebase.storage()
+    const extension = file.name.split('.').pop()
+    const filename = `hero.${extension}`
+
+    storage
+      .ref(`profilePics/${state.firebase.auth.uid}/${filename}`)
+      .put(file)
+      .then((response) => {
+        response.ref.getDownloadURL().then((link) => {
+          firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+              user.updateProfile({
+                photoURL: link
+              })
+              dispatch({ type: ProfileConstants.CHANGE_PROFILE_IMAGE_SUCCESS })
+            }
+          })
+        })
       })
-      .catch((error) => {
-        dispatch({ type: ProfileConstants.MODIFY_USERCREDS_ERROR, error })
-      })
+      .catch((error) =>
+        dispatch({ type: ProfileConstants.CHANGE_PROFILE_IMAGE_ERROR, error })
+      )
   }
 }

@@ -5,6 +5,7 @@ import { AuthConstants } from '../../constants/actionConstants'
 export const signInAction = (credentials) => {
   return (dispatch, getState, { getFirebase }) => {
     const firebase = getFirebase()
+
     firebase
       .auth()
       .signInWithEmailAndPassword(credentials.email, credentials.password)
@@ -47,7 +48,17 @@ export const signUpAction = (newUser) => {
         })
       })
       .then(() => {
-        dispatch({ type: AuthConstants.SIGNUP_SUCCESS })
+        firebase.auth().onAuthStateChanged((user) => {
+          if (user) {
+            // user is signed in
+            user.updateProfile({
+              displayName: `${newUser.fname} ${newUser.sname}`,
+              photoURL:
+                'https://firebasestorage.googleapis.com/v0/b/netty-chat.appspot.com/o/profilePics%2Fcommon%2Fno-img.png?alt=media'
+            })
+            dispatch({ type: AuthConstants.SIGNUP_SUCCESS })
+          }
+        })
       })
       .catch((err) => {
         dispatch({ type: AuthConstants.SIGNUP_ERROR, err })
