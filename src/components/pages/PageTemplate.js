@@ -56,11 +56,10 @@ const useStyles = makeStyles((theme) => ({
     width: drawerWidth
   },
   content: {
-    flexGrow: 1,
+    width: '100%',
     marginTop: theme.spacing(8),
-    padding: theme.spacing(3),
-    height: `calc(100% - ${theme.spacing(8)}px)`,
-    overflow: 'auto'
+    padding: `${theme.spacing(1)}px`,
+    overflow: 'auto' // container has it's own scroll bar
   },
   nettyIcon: {
     display: 'block',

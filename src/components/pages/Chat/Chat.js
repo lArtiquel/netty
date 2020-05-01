@@ -6,21 +6,22 @@ import MessageInput from './MessageInput'
 import ChatContainer from './ChatContainer'
 
 const useStyles = makeStyles((theme) => ({
+  ...theme.speddable,
   box: {
     display: 'flex',
     flexFlow: 'column',
     height: '100%',
     '& .chatHeader': {
-      margin: '15px 20px 10px 20px',
+      margin: '5px 20px',
       flex: '0 1 auto'
     },
     '& .chatContainer': {
-      margin: '10px 20px 10px 20px',
+      margin: '10px 5px',
       flex: '1 1 auto',
-      overflow: 'auto'
+      overflow: 'auto' // that's really important prop, without it flexbox spread outside the viewport
     },
     '& .messageInput': {
-      margin: '10px 20px 10px 20px',
+      margin: '10px 0px',
       flex: '0 1 auto'
     }
   }
