@@ -2,8 +2,12 @@ import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import { Divider } from '@material-ui/core'
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import { closeModalAction } from '../../../store/actions/chatActions'
 import MessageInput from './MessageInput'
 import ChatContainer from './ChatContainer'
+import Modal from '../../Modal'
 
 const useStyles = makeStyles((theme) => ({
   ...theme.speddable,
@@ -27,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-export default function Chat() {
+const Chat = ({ modal, closeModal }) => {
   const styles = useStyles()
 
   return (
@@ -45,6 +49,33 @@ export default function Chat() {
       <div className="messageInput">
         <MessageInput />
       </div>
+      {modal.isOpen && (
+        <Modal
+          isOpen
+          title={modal.title}
+          message={modal.message}
+          closeModalInState={closeModal}
+        />
+      )}
     </div>
   )
 }
+
+Chat.propTypes = {
+  modal: PropTypes.object.isRequired,
+  closeModal: PropTypes.func.isRequired
+}
+
+const mapStateToProps = (state) => {
+  return {
+    modal: state.chat.modal
+  }
+}
+
+const mapActionsToProps = (dispatch) => {
+  return {
+    closeModal: () => dispatch(closeModalAction)
+  }
+}
+
+export default connect(mapStateToProps, mapActionsToProps)(Chat)
