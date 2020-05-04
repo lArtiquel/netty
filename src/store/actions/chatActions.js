@@ -56,25 +56,6 @@ export const subscribeToLastAction = (limit) => {
                   message: { ...change.doc.data(), id: change.doc.id }
                 })
               }
-              // !With those functions we will have realtime updates of removed and edited messages on all client sides
-              // !But for example, when message goes out the query limit, it will be removed, new message added and then modified, so it looks kinda sick
-              if (change.type === 'modified') {
-                console.log('Modified message: ', {
-                  ...change.doc.data(),
-                  id: change.doc.id
-                })
-                dispatch({
-                  type: ChatConstants.SUBSCRIBED_MESSAGE_MODIFIED,
-                  message: { ...change.doc.data(), id: change.doc.id }
-                })
-              }
-              if (change.type === 'removed') {
-                console.log('Removed message: ', change.doc.id)
-                dispatch({
-                  type: ChatConstants.SUBSCRIBED_MESSAGE_REMOVED,
-                  message: { id: change.doc.id }
-                })
-              }
             })
         },
         (error) => console.log(error.message)
