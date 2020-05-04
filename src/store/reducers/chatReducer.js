@@ -5,7 +5,9 @@ const initState = {
     isOpen: false,
     title: '',
     message: ''
-  }
+  },
+  messages: [],
+  subscriptionHandler: () => {}
 }
 
 const chatReducer = (state = initState, action) => {
@@ -32,6 +34,51 @@ const chatReducer = (state = initState, action) => {
           message: ''
         }
       }
+    case ChatConstants.SUBSCRIBED_MESSAGE_ADDED: {
+      return {
+        ...state,
+        // push front new message
+        messages: [action.message, ...state.messages]
+      }
+    }
+    // !Realtime updates functionality of updated and removed messages
+    case ChatConstants.SUBSCRIBED_MESSAGE_MODIFIED: {
+      return {
+        ...state,
+        messages: state.messages.map((message) => {
+          if (message.id !== action.message.id) {
+            // This isn't the message we care about - keep it as-is
+            return message
+          }
+          // Otherwise, this is the one we want - return an updated value
+          return {
+            ...action.message
+          }
+        })
+      }
+    }
+    case ChatConstants.SUBSCRIBED_MESSAGE_REMOVED: {
+      return {
+        ...state,
+        messages: state.messages.filter(
+          (message) => message.id !== action.message.id
+        )
+      }
+    }
+    // !End
+    case ChatConstants.STORE_SUBSCRIPTION_HANDLER: {
+      return {
+        ...state,
+        subscriptionHandle: action.payload
+      }
+    }
+    case ChatConstants.CANCEL_SUBSCRIPTION: {
+      return {
+        ...state,
+        messages: [],
+        subscriptionHandle: () => {}
+      }
+    }
     default:
       return {
         ...state
