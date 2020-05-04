@@ -81,10 +81,15 @@ export const changeProfileImageAction = (file) => {
         response.ref.getDownloadURL().then((link) => {
           firebase.auth().onAuthStateChanged((user) => {
             if (user) {
-              user.updateProfile({
-                photoURL: link
-              })
-              dispatch({ type: ProfileConstants.CHANGE_PROFILE_IMAGE_SUCCESS })
+              user
+                .updateProfile({
+                  photoURL: link
+                })
+                .then(() => {
+                  dispatch({
+                    type: ProfileConstants.CHANGE_PROFILE_IMAGE_SUCCESS
+                  })
+                })
             }
           })
         })

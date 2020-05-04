@@ -70,7 +70,8 @@ const profileReducer = (state = initState, action) => {
         modal: {
           isOpen: true,
           title: 'SUCCESS',
-          message: 'Profile image successfully updated!'
+          message:
+            'Profile image successfully updated! Please, update the page to see applied changes.'
         }
       }
     case ProfileConstants.CHANGE_PROFILE_IMAGE_ERROR:

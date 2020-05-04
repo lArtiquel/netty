@@ -24,8 +24,9 @@ const useStyles = makeStyles((theme) => ({
     position: 'relative',
     margin: '10px 10px 20px 10px',
     '& img': {
-      maxWidth: '200px',
-      maxHeight: '200px',
+      objectFit: 'contain',
+      width: '200px',
+      height: '200px',
       marginLeft: 'auto',
       marginRight: 'auto',
       borderRadius: '50%'
@@ -63,7 +64,7 @@ const UserInfoForm = ({
 
   const applyChanges = (e) => {
     e.preventDefault()
-    // dispatchin' an Redux action
+    // dispatchin' a Redux action
     modifyUserInfo(userInfo)
   }
 
