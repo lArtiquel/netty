@@ -47,14 +47,30 @@ export const subscribeToLastAction = (limit) => {
             .reverse()
             .forEach((change) => {
               if (change.type === 'added') {
-                console.log('Added message: ', {
-                  ...change.doc.data(),
-                  id: change.doc.id
-                })
-                dispatch({
-                  type: ChatConstants.SUBSCRIBED_MESSAGE_ADDED,
-                  message: { ...change.doc.data(), id: change.doc.id }
-                })
+                // load additional message info(photoURL, fname, sname) from firestore
+                firestore
+                  .collection('userInfo')
+                  .doc(change.doc.data().userId)
+                  .get()
+                  .then((doc) => {
+                    console.log('Added message: ', {
+                      ...change.doc.data(),
+                      id: change.doc.id,
+                      photoURL: doc.data().photoURL,
+                      fname: doc.data().fname,
+                      sname: doc.data().sname
+                    })
+                    dispatch({
+                      type: ChatConstants.SUBSCRIBED_MESSAGE_ADDED,
+                      message: {
+                        ...change.doc.data(),
+                        id: change.doc.id,
+                        photoURL: doc.data().photoURL,
+                        fname: doc.data().fname,
+                        sname: doc.data().sname
+                      }
+                    })
+                  })
               }
             })
         },
@@ -63,7 +79,7 @@ export const subscribeToLastAction = (limit) => {
     // store subscription handle in state
     console.log('Subscribed to last `limit` messages!')
     dispatch({
-      type: ChatConstants.STORE_SUBSCRIPTION_HANDLER,
+      type: ChatConstants.STORE_SUBSCRIPTION_HANDLE,
       payload: subscriptionHandle
     })
   }

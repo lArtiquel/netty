@@ -4,13 +4,22 @@ import Paper from '@material-ui/core/Paper'
 import Avatar from '@material-ui/core/Avatar'
 import Typography from '@material-ui/core/Typography'
 import PropTypes from 'prop-types'
+import * as dayjs from 'dayjs'
 
 const Message = ({ message }) => {
+  // we need that 'few seconds ago' just because it takes some time to set serverTimestamp, so we are receiving null in first couple seconds
+  const timestamp = message.createdAt
+    ? dayjs.unix(message.createdAt.seconds).format('YYYY/MM/DD h:mm A')
+    : 'few seconds ago'
+
   return (
     <Box my={1}>
       <Paper variant="outlined">
         <Box display="flex" flexDirection="row" px={2} py={1} boxShadow={4}>
-          <Avatar alt="UserNameHere" src="HereUserPic" />
+          <Avatar src={message.photoURL}>
+            {message.fname[0]}
+            {message.sname[0]}
+          </Avatar>
           <Box display="flex" flexDirection="column" flexGrow={1} px={2}>
             <Box display="flex" flexDirection="row">
               <Box
@@ -20,7 +29,7 @@ const Message = ({ message }) => {
                 color="#90caf9"
               >
                 <Typography variant="subtitle2" gutterBottom>
-                  {message.id}
+                  {message.fname} {message.sname}
                 </Typography>
               </Box>
               <Box
@@ -32,7 +41,8 @@ const Message = ({ message }) => {
               >
                 <Typography variant="subtitle2" gutterBottom>
                   {/* {message.createdAt} -- careful, it's obj! */}
-                  01.01.2020 3:30 PM
+                  {/* 01.01.2020 3:30 PM */}
+                  {timestamp}
                 </Typography>
               </Box>
             </Box>

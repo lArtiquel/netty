@@ -67,9 +67,10 @@ export const modifyUserCredsAction = (newUserCreds) => {
 }
 
 export const changeProfileImageAction = (file) => {
-  return (dispatch, getState, { getFirebase }) => {
+  return (dispatch, getState, { getFirebase, getFirestore }) => {
     const state = getState()
     const firebase = getFirebase()
+    const firestore = getFirestore()
     const storage = firebase.storage()
     const extension = file.name.split('.').pop()
     const filename = `hero.${extension}`
@@ -81,15 +82,27 @@ export const changeProfileImageAction = (file) => {
         response.ref.getDownloadURL().then((link) => {
           firebase.auth().onAuthStateChanged((user) => {
             if (user) {
+              // update photoURL field in firebase authentication and firestore:userInfo/${userId}
               user
                 .updateProfile({
                   photoURL: link
                 })
+                .then(() =>
+                  firestore.collection('userInfo').doc(user.uid).update({
+                    photoURL: link
+                  })
+                )
                 .then(() => {
                   dispatch({
                     type: ProfileConstants.CHANGE_PROFILE_IMAGE_SUCCESS
                   })
                 })
+                .catch((error) =>
+                  dispatch({
+                    type: ProfileConstants.CHANGE_PROFILE_IMAGE_ERROR,
+                    error
+                  })
+                )
             }
           })
         })

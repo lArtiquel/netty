@@ -41,10 +41,15 @@ const chatReducer = (state = initState, action) => {
         messages: [action.message, ...state.messages]
       }
     }
-    case ChatConstants.STORE_SUBSCRIPTION_HANDLER: {
+    case ChatConstants.STORE_SUBSCRIPTION_HANDLE: {
+      if (action.payload) {
+        return {
+          ...state,
+          subscriptionHandle: action.payload
+        }
+      }
       return {
-        ...state,
-        subscriptionHandle: action.payload
+        ...state
       }
     }
     case ChatConstants.CANCEL_SUBSCRIPTION: {

@@ -44,7 +44,8 @@ export const signUpAction = (newUser) => {
           sname: newUser.sname,
           dob: newUser.dob,
           location: newUser.location,
-          bio: newUser.bio
+          bio: newUser.bio,
+          photoURL: ''
         })
       })
       .then(() => {
