@@ -16,10 +16,10 @@ const useStyles = makeStyles((theme) => ({
 
 const Message = ({ message }) => {
   const styles = useStyles()
-  // we need that 'few seconds ago' just because it takes some time to set serverTimestamp, so we are receiving null in first couple seconds
+  // set localTimestamp just because it takes some time to set serverTimestamp, so we are receiving null when listener fires up
   const timestamp = message.createdAt
-    ? dayjs.unix(message.createdAt.seconds).format('YYYY/MM/DD h:mm A')
-    : 'few seconds ago'
+    ? dayjs(message.createdAt.milliseconds).format('YYYY/MM/DD h:mm A')
+    : dayjs(Date.now()).format('YYYY/MM/DD h:mm A')
 
   return (
     <Box my={1}>
