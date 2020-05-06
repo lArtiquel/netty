@@ -58,7 +58,10 @@ const UserInfoForm = ({
 
   useEffect(() => {
     if (profileInfo) {
-      setUserInfo(profileInfo[auth.uid])
+      setUserInfo({
+        ...userInfo,
+        ...profileInfo[auth.uid]
+      })
     }
   }, [profileInfo])
 
