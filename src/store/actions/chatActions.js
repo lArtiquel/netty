@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 import { ChatConstants } from '../../constants/actionConstants'
 
 export const sendMessageAction = (newMessage) => {
@@ -34,6 +35,48 @@ export const subscribeToLastAction = (limit) => {
   return (dispatch, getState, { getFirestore }) => {
     const firestore = getFirestore()
 
+    // const subscriptionHandle = firestore
+    //   .collection('chats')
+    //   .doc('Netty-global')
+    //   .collection('messages')
+    //   .orderBy('createdAt', 'desc')
+    //   .limit(limit)
+    //   .onSnapshot(
+    //     (snapshot) => {
+    //       snapshot
+    //         .docChanges()
+    //         .reverse()
+    //         .forEach((change) => {
+    //           if (change.type === 'added') {
+    //             // load additional message info(photoURL, fname, sname) from firestore
+    //             firestore
+    //               .collection('userInfo')
+    //               .doc(change.doc.data().userId)
+    //               .get()
+    //               .then((doc) => {
+    //                 console.log('Added message: ', {
+    //                   ...change.doc.data(),
+    //                   id: change.doc.id,
+    //                   photoURL: doc.data().photoURL,
+    //                   fname: doc.data().fname,
+    //                   sname: doc.data().sname
+    //                 })
+    //                 dispatch({
+    //                   type: ChatConstants.SUBSCRIBED_MESSAGE_ADDED,
+    //                   message: {
+    //                     ...change.doc.data(),
+    //                     id: change.doc.id,
+    //                     photoURL: doc.data().photoURL,
+    //                     fname: doc.data().fname,
+    //                     sname: doc.data().sname
+    //                   }
+    //                 })
+    //               })
+    //           }
+    //         })
+    //     },
+    //     (error) => console.log(error.message)
+    //   )
     const subscriptionHandle = firestore
       .collection('chats')
       .doc('Netty-global')
@@ -42,37 +85,47 @@ export const subscribeToLastAction = (limit) => {
       .limit(limit)
       .onSnapshot(
         (snapshot) => {
-          snapshot
-            .docChanges()
-            .reverse()
-            .forEach((change) => {
-              if (change.type === 'added') {
-                // load additional message info(photoURL, fname, sname) from firestore
-                firestore
-                  .collection('userInfo')
-                  .doc(change.doc.data().userId)
-                  .get()
-                  .then((doc) => {
-                    console.log('Added message: ', {
-                      ...change.doc.data(),
-                      id: change.doc.id,
-                      photoURL: doc.data().photoURL,
-                      fname: doc.data().fname,
-                      sname: doc.data().sname
-                    })
-                    dispatch({
-                      type: ChatConstants.SUBSCRIBED_MESSAGE_ADDED,
-                      message: {
-                        ...change.doc.data(),
-                        id: change.doc.id,
-                        photoURL: doc.data().photoURL,
-                        fname: doc.data().fname,
-                        sname: doc.data().sname
-                      }
-                    })
+          const changes = snapshot.docChanges().reverse()
+          // create an initial immediately resolving promise, and then chain new promises as the previous ones resolve
+          for (
+            let i = 0, promiceResolver = Promise.resolve();
+            i < changes.length;
+            i++
+          ) {
+            const change = changes[i]
+            if (change.type === 'added') {
+              promiceResolver = promiceResolver.then(
+                () =>
+                  new Promise((resolve) => {
+                    firestore
+                      .collection('userInfo')
+                      .doc(change.doc.data().userId)
+                      .get()
+                      .then((doc) => {
+                        console.log('Added message: ', {
+                          ...change.doc.data(),
+                          id: change.doc.id,
+                          photoURL: doc.data().photoURL,
+                          fname: doc.data().fname,
+                          sname: doc.data().sname
+                        })
+                        dispatch({
+                          type: ChatConstants.SUBSCRIBED_MESSAGE_ADDED,
+                          message: {
+                            ...change.doc.data(),
+                            id: change.doc.id,
+                            photoURL: doc.data().photoURL,
+                            fname: doc.data().fname,
+                            sname: doc.data().sname
+                          }
+                        })
+                        // don't forget to resolve promise here
+                        resolve()
+                      })
                   })
-              }
-            })
+              )
+            }
+          }
         },
         (error) => console.log(error.message)
       )

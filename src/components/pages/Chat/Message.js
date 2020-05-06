@@ -5,8 +5,17 @@ import Avatar from '@material-ui/core/Avatar'
 import Typography from '@material-ui/core/Typography'
 import PropTypes from 'prop-types'
 import * as dayjs from 'dayjs'
+import { makeStyles } from '@material-ui/core/styles'
+
+const useStyles = makeStyles((theme) => ({
+  avatar: {
+    width: theme.spacing(6),
+    height: theme.spacing(6)
+  }
+}))
 
 const Message = ({ message }) => {
+  const styles = useStyles()
   // we need that 'few seconds ago' just because it takes some time to set serverTimestamp, so we are receiving null in first couple seconds
   const timestamp = message.createdAt
     ? dayjs.unix(message.createdAt.seconds).format('YYYY/MM/DD h:mm A')
@@ -16,7 +25,7 @@ const Message = ({ message }) => {
     <Box my={1}>
       <Paper variant="outlined">
         <Box display="flex" flexDirection="row" px={2} py={1} boxShadow={4}>
-          <Avatar src={message.photoURL}>
+          <Avatar src={message.photoURL} className={styles.avatar}>
             {message.fname[0]}
             {message.sname[0]}
           </Avatar>
