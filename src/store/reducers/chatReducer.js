@@ -1,4 +1,5 @@
 import { ChatConstants } from '../../constants/actionConstants'
+import { ChatConfig } from '../../config/AppConfig'
 
 const initState = {
   modal: {
@@ -7,7 +8,9 @@ const initState = {
     message: ''
   },
   messages: [],
-  subscriptionHandler: () => {}
+  subscriptionHandler: () => {},
+  canILoadMore: false,
+  allMessagesLoaded: false
 }
 
 const chatReducer = (state = initState, action) => {
@@ -16,6 +19,7 @@ const chatReducer = (state = initState, action) => {
       return {
         ...state
       }
+
     case ChatConstants.MESSAGE_SEND_ERROR:
       return {
         ...state,
@@ -25,6 +29,7 @@ const chatReducer = (state = initState, action) => {
           message: action.error.message
         }
       }
+
     case ChatConstants.CLOSE_MODAL:
       return {
         ...state,
@@ -34,13 +39,52 @@ const chatReducer = (state = initState, action) => {
           message: ''
         }
       }
+
     case ChatConstants.SUBSCRIBED_MESSAGE_ADDED: {
+      if (!state.canILoadMore && !state.allMessagesLoaded)
+        if (
+          state.messages.length + 1 >=
+          ChatConfig.MESSAGES_SUBSCRIPTION_THRESHOLD
+        )
+          return {
+            ...state,
+            canILoadMore: true,
+            messages: [action.message, ...state.messages]
+          }
       return {
         ...state,
-        // push front new message
         messages: [action.message, ...state.messages]
       }
     }
+
+    case ChatConstants.LOAD_MORE_SUCCESSED: {
+      if (
+        action.newMessages.length < ChatConfig.MESSAGES_SUBSCRIPTION_THRESHOLD
+      )
+        return {
+          ...state,
+          canILoadMore: false,
+          allMessagesLoaded: true,
+          messages: [...state.messages, ...action.newMessages]
+        }
+      return {
+        ...state,
+        messages: [...state.messages, ...action.newMessages]
+      }
+    }
+
+    case ChatConstants.LOAD_MORE_FAILED: {
+      return {
+        ...state,
+        modal: {
+          isOpen: true,
+          title: 'Connection error',
+          message:
+            'You can not reach the top without connection. Try to reload later.'
+        }
+      }
+    }
+
     case ChatConstants.STORE_SUBSCRIPTION_HANDLE: {
       if (action.payload) {
         return {
@@ -52,6 +96,7 @@ const chatReducer = (state = initState, action) => {
         ...state
       }
     }
+
     case ChatConstants.CANCEL_SUBSCRIPTION: {
       return {
         ...state,
@@ -59,6 +104,7 @@ const chatReducer = (state = initState, action) => {
         subscriptionHandle: () => {}
       }
     }
+
     default:
       return {
         ...state

@@ -1,5 +1,5 @@
-/* eslint-disable no-restricted-syntax */
 import { ChatConstants } from '../../constants/actionConstants'
+import { ChatConfig } from '../../config/AppConfig'
 
 export const sendMessageAction = (newMessage) => {
   return (dispatch, getState, { getFirestore }) => {
@@ -26,75 +26,34 @@ export const sendMessageAction = (newMessage) => {
     } else
       dispatch({
         type: ChatConstants.MESSAGE_SEND_ERROR,
-        error: { message: 'Sorry, you are not logged in!' }
+        error: { message: 'Sorry, log in first!' }
       })
   }
 }
 
-export const subscribeToLastAction = (limit) => {
+export const subscribeToMessagesAction = () => {
   return (dispatch, getState, { getFirestore }) => {
     const firestore = getFirestore()
 
-    // const subscriptionHandle = firestore
-    //   .collection('chats')
-    //   .doc('Netty-global')
-    //   .collection('messages')
-    //   .orderBy('createdAt', 'desc')
-    //   .limit(limit)
-    //   .onSnapshot(
-    //     (snapshot) => {
-    //       snapshot
-    //         .docChanges()
-    //         .reverse()
-    //         .forEach((change) => {
-    //           if (change.type === 'added') {
-    //             // load additional message info(photoURL, fname, sname) from firestore
-    //             firestore
-    //               .collection('userInfo')
-    //               .doc(change.doc.data().userId)
-    //               .get()
-    //               .then((doc) => {
-    //                 console.log('Added message: ', {
-    //                   ...change.doc.data(),
-    //                   id: change.doc.id,
-    //                   photoURL: doc.data().photoURL,
-    //                   fname: doc.data().fname,
-    //                   sname: doc.data().sname
-    //                 })
-    //                 dispatch({
-    //                   type: ChatConstants.SUBSCRIBED_MESSAGE_ADDED,
-    //                   message: {
-    //                     ...change.doc.data(),
-    //                     id: change.doc.id,
-    //                     photoURL: doc.data().photoURL,
-    //                     fname: doc.data().fname,
-    //                     sname: doc.data().sname
-    //                   }
-    //                 })
-    //               })
-    //           }
-    //         })
-    //     },
-    //     (error) => console.log(error.message)
-    //   )
     const subscriptionHandle = firestore
       .collection('chats')
       .doc('Netty-global')
       .collection('messages')
       .orderBy('createdAt', 'desc')
-      .limit(limit)
+      .limit(ChatConfig.MESSAGES_SUBSCRIPTION_THRESHOLD)
       .onSnapshot(
         (snapshot) => {
           const changes = snapshot.docChanges().reverse()
           // create an initial immediately resolving promise, and then chain new promises as the previous ones resolve
+          // this needed because foreach is sync operation in JS and we won't get needed execution result order if we'll just run async operations inside of it
           for (
-            let i = 0, promiceResolver = Promise.resolve();
+            let i = 0, promiseResolver = Promise.resolve();
             i < changes.length;
             i++
           ) {
             const change = changes[i]
             if (change.type === 'added') {
-              promiceResolver = promiceResolver.then(
+              promiseResolver = promiseResolver.then(
                 () =>
                   new Promise((resolve) => {
                     firestore
@@ -135,6 +94,66 @@ export const subscribeToLastAction = (limit) => {
       type: ChatConstants.STORE_SUBSCRIPTION_HANDLE,
       payload: subscriptionHandle
     })
+  }
+}
+
+export const loadMoreAction = (howMany) => {
+  return (dispatch, getState, { getFirestore }) => {
+    const firestore = getFirestore()
+    const storedMessages = getState().chat.messages
+    const lastMessageId = storedMessages[storedMessages.length - 1].id
+    const newMessages = []
+
+    firestore
+      .collection('chats')
+      .doc('Netty-global')
+      .collection('messages')
+      .doc(lastMessageId)
+      .get()
+      .then((doc) =>
+        firestore
+          .collection('chats')
+          .doc('Netty-global')
+          .collection('messages')
+          .orderBy('createdAt', 'desc')
+          .startAfter(doc)
+          .limit(howMany)
+          .get()
+      )
+      .then((docs) => {
+        for (
+          let i = 0, promiseResolver = Promise.resolve();
+          i < docs.length;
+          i++
+        ) {
+          const { doc } = docs[i]
+          promiseResolver = promiseResolver.then(
+            () =>
+              new Promise((resolve) => {
+                firestore
+                  .collection('userInfo')
+                  .doc(doc.data().userId)
+                  .get()
+                  .then((userDoc) => {
+                    newMessages.push({
+                      ...doc.data(),
+                      id: doc.id,
+                      photoURL: userDoc.data().photoURL,
+                      fname: userDoc.data().fname,
+                      sname: userDoc.data().sname
+                    })
+                    // don't forget to resolve promise here
+                    resolve()
+                  })
+              })
+          )
+        }
+        dispatch({ type: ChatConstants.LOAD_MORE_SUCCESSED, newMessages })
+      })
+      .catch((error) => {
+        console.log('Load more error message:', error.message)
+        dispatch({ type: ChatConstants.LOAD_MORE_FAILED })
+      })
   }
 }
 

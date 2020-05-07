@@ -5,7 +5,7 @@ import { compose } from 'redux'
 import { connect } from 'react-redux'
 import Message from './Message'
 import {
-  subscribeToLastAction,
+  subscribeToMessagesAction,
   cancelSubscriptionAction
 } from '../../../store/actions/chatActions'
 
@@ -23,14 +23,13 @@ const useStyles = makeStyles((theme) => ({
 const MessageStack = ({
   anchorID,
   messages,
-  subscribeToLast,
+  subscribeToMessages,
   cancelSubscription
 }) => {
   const styles = useStyles()
 
   useEffect(() => {
-    console.log('in use effect!')
-    subscribeToLast(3)
+    subscribeToMessages()
     return () => cancelSubscription()
   }, [])
 
@@ -49,10 +48,9 @@ const MessageStack = ({
             color: '#e0e0e0'
           }}
         >
-          <h4>No messages for now...</h4>
+          <h4>No loaded messages for now...</h4>
         </div>
       )}
-      <button>Load more</button>
     </div>
   )
 }
@@ -60,7 +58,7 @@ const MessageStack = ({
 MessageStack.propTypes = {
   anchorID: PropTypes.string.isRequired,
   messages: PropTypes.array.isRequired,
-  subscribeToLast: PropTypes.func.isRequired,
+  subscribeToMessages: PropTypes.func.isRequired,
   cancelSubscription: PropTypes.func.isRequired
 }
 
@@ -72,7 +70,7 @@ const mapStateToProps = (state) => {
 
 const mapActionsToProps = (dispatch) => {
   return {
-    subscribeToLast: (limit) => dispatch(subscribeToLastAction(limit)),
+    subscribeToMessages: () => dispatch(subscribeToMessagesAction()),
     cancelSubscription: () => dispatch(cancelSubscriptionAction())
   }
 }
@@ -93,19 +91,3 @@ export default compose(connect(mapStateToProps, mapActionsToProps))(
 //     storeAs: 'messages'
 //   }
 // ])
-
-// !Just query
-// const messagesPath = firestore
-//   .collection('chats')
-//   .doc('Netty-global')
-//   .collection('messages')
-// messagesPath
-//   .orderBy('createdAt', 'desc')
-//   .startAfter(getState().firestore.ordered.messages[2])
-//   .limit(1) // prints last, should be a queried doc
-//   .get()
-//   .then((bunchOfMessages) => {
-//     console.log(bunchOfMessages.docs[2].get('body'))
-//     console.log(getState().firestore)
-//   })
-//   .catch((error) => console.log(error.message))

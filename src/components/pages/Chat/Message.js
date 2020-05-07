@@ -16,7 +16,10 @@ const useStyles = makeStyles((theme) => ({
 
 const Message = ({ message }) => {
   const styles = useStyles()
-  // set localTimestamp just because it takes some time to set serverTimestamp, so we are receiving null when listener fires up
+  // when new message sent to server it takes some time to set serverTimestamp
+  // we are receiving null at createdAt when new message listener pops up new message
+  // so i decided to display local client time until serverTimestamp retrieving from token of server side
+  // and yes, we could set serverTimestamp intstead of this with next event, but we are not listening "modify" events
   const timestamp = message.createdAt
     ? dayjs(message.createdAt.milliseconds).format('YYYY/MM/DD h:mm A')
     : dayjs(Date.now()).format('YYYY/MM/DD h:mm A')
