@@ -40,27 +40,27 @@ const chatReducer = (state = initState, action) => {
         }
       }
 
-    case ChatConstants.SUBSCRIBED_MESSAGE_ADDED: {
+    case ChatConstants.SUBSCRIBED_MESSAGES_ADDED: {
+      // at the beginning those flags are falsy, cuz we don't need to loadMoreMessages if messages.length < MESSAGES_SUBSCRIPTION_THRESHOLD
       if (!state.canILoadMore && !state.allMessagesLoaded)
         if (
-          state.messages.length + 1 >=
+          state.messages.length + action.messages.length >=
           ChatConfig.MESSAGES_SUBSCRIPTION_THRESHOLD
         )
           return {
             ...state,
             canILoadMore: true,
-            messages: [action.message, ...state.messages]
+            messages: [...action.messages, ...state.messages]
           }
       return {
         ...state,
-        messages: [action.message, ...state.messages]
+        messages: [...action.messages, ...state.messages]
       }
     }
 
     case ChatConstants.LOAD_MORE_SUCCESSED: {
-      if (
-        action.newMessages.length < ChatConfig.MESSAGES_SUBSCRIPTION_THRESHOLD
-      )
+      // if new messages batch size less than planned => all loaded
+      if (action.newMessages.length < ChatConfig.LOAD_MORE_MESSAGES_BATCH_SIZE)
         return {
           ...state,
           canILoadMore: false,
@@ -76,11 +76,13 @@ const chatReducer = (state = initState, action) => {
     case ChatConstants.LOAD_MORE_FAILED: {
       return {
         ...state,
+        canILoadMore: false,
+        allMessagesLoaded: true,
         modal: {
           isOpen: true,
           title: 'Connection error',
           message:
-            'You can not reach the top without connection. Try to reload later.'
+            'You can not reach the top without connection. Try to reload page later.'
         }
       }
     }
@@ -98,10 +100,10 @@ const chatReducer = (state = initState, action) => {
     }
 
     case ChatConstants.CANCEL_SUBSCRIPTION: {
+      // do not keep in store any messages or any info
+      // means if component which possessed that info destroyed, this state is gone too
       return {
-        ...state,
-        messages: [],
-        subscriptionHandle: () => {}
+        ...initState
       }
     }
 

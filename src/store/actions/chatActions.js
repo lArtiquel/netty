@@ -31,9 +31,10 @@ export const sendMessageAction = (newMessage) => {
   }
 }
 
-export const subscribeToMessagesAction = () => {
+export const subscribeToLastMessagesAction = () => {
   return (dispatch, getState, { getFirestore }) => {
     const firestore = getFirestore()
+    const messages = []
 
     const subscriptionHandle = firestore
       .collection('chats')
@@ -43,7 +44,7 @@ export const subscribeToMessagesAction = () => {
       .limit(ChatConfig.MESSAGES_SUBSCRIPTION_THRESHOLD)
       .onSnapshot(
         (snapshot) => {
-          const changes = snapshot.docChanges().reverse()
+          const changes = snapshot.docChanges()
           // create an initial immediately resolving promise, and then chain new promises as the previous ones resolve
           // this needed because foreach is sync operation in JS and we won't get needed execution result order if we'll just run async operations inside of it
           for (
@@ -61,23 +62,19 @@ export const subscribeToMessagesAction = () => {
                       .doc(change.doc.data().userId)
                       .get()
                       .then((doc) => {
-                        console.log('Added message: ', {
+                        messages.push({
                           ...change.doc.data(),
                           id: change.doc.id,
                           photoURL: doc.data().photoURL,
                           fname: doc.data().fname,
                           sname: doc.data().sname
                         })
-                        dispatch({
-                          type: ChatConstants.SUBSCRIBED_MESSAGE_ADDED,
-                          message: {
-                            ...change.doc.data(),
-                            id: change.doc.id,
-                            photoURL: doc.data().photoURL,
-                            fname: doc.data().fname,
-                            sname: doc.data().sname
-                          }
-                        })
+                        if (i === changes.length - 1) {
+                          dispatch({
+                            type: ChatConstants.SUBSCRIBED_MESSAGES_ADDED,
+                            messages
+                          })
+                        }
                         // don't forget to resolve promise here
                         resolve()
                       })
@@ -97,7 +94,7 @@ export const subscribeToMessagesAction = () => {
   }
 }
 
-export const loadMoreAction = (howMany) => {
+export const loadMoreMessagesAction = () => {
   return (dispatch, getState, { getFirestore }) => {
     const firestore = getFirestore()
     const storedMessages = getState().chat.messages
@@ -110,23 +107,24 @@ export const loadMoreAction = (howMany) => {
       .collection('messages')
       .doc(lastMessageId)
       .get()
-      .then((doc) =>
-        firestore
+      .then((doc) => {
+        console.log(`last doc: `, doc.data())
+        return firestore
           .collection('chats')
           .doc('Netty-global')
           .collection('messages')
           .orderBy('createdAt', 'desc')
           .startAfter(doc)
-          .limit(howMany)
+          .limit(ChatConfig.LOAD_MORE_MESSAGES_BATCH_SIZE)
           .get()
-      )
-      .then((docs) => {
+      })
+      .then((collection) => {
         for (
           let i = 0, promiseResolver = Promise.resolve();
-          i < docs.length;
+          i < collection.docs.length;
           i++
         ) {
-          const { doc } = docs[i]
+          const doc = collection.docs[i]
           promiseResolver = promiseResolver.then(
             () =>
               new Promise((resolve) => {
@@ -142,13 +140,19 @@ export const loadMoreAction = (howMany) => {
                       fname: userDoc.data().fname,
                       sname: userDoc.data().sname
                     })
+                    if (i === collection.docs.length - 1) {
+                      console.log('newMessages:', newMessages)
+                      dispatch({
+                        type: ChatConstants.LOAD_MORE_SUCCESSED,
+                        newMessages
+                      })
+                    }
                     // don't forget to resolve promise here
                     resolve()
                   })
               })
           )
         }
-        dispatch({ type: ChatConstants.LOAD_MORE_SUCCESSED, newMessages })
       })
       .catch((error) => {
         console.log('Load more error message:', error.message)

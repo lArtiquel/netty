@@ -3,10 +3,13 @@ import { makeStyles } from '@material-ui/core/styles'
 import PropTypes from 'prop-types'
 import { compose } from 'redux'
 import { connect } from 'react-redux'
+import InfiniteScroll from '../../InfiniteScroll'
+import CircularProgress from '../../CircularProgress'
 import Message from './Message'
 import {
-  subscribeToMessagesAction,
-  cancelSubscriptionAction
+  subscribeToLastMessagesAction,
+  cancelSubscriptionAction,
+  loadMoreMessagesAction
 } from '../../../store/actions/chatActions'
 
 const useStyles = makeStyles((theme) => ({
@@ -23,18 +26,33 @@ const useStyles = makeStyles((theme) => ({
 const MessageStack = ({
   anchorID,
   messages,
-  subscribeToMessages,
-  cancelSubscription
+  subscribeToLastMessages,
+  cancelSubscription,
+  canILoadMore,
+  allMessagesLoaded,
+  loadMoreMessages
 }) => {
   const styles = useStyles()
 
   useEffect(() => {
-    subscribeToMessages()
+    subscribeToLastMessages()
     return () => cancelSubscription()
   }, [])
 
   return (
-    <div className={styles.messageStackWrapper}>
+    <InfiniteScroll
+      hasMore={canILoadMore && !allMessagesLoaded}
+      loadMore={() => loadMoreMessages()}
+      loader={<CircularProgress />}
+      endMessage={
+        <div style={{ textAlign: 'center' }}>
+          <p>Yay! You have seen them all!</p>
+        </div>
+      }
+      reverse
+      threshold={1}
+      materialStyle={styles.messageStackWrapper}
+    >
       {messages.length ? (
         messages.map((message, index) => (
           <div key={message.id} id={!index ? anchorID : undefined}>
@@ -51,27 +69,33 @@ const MessageStack = ({
           <h4>No loaded messages for now...</h4>
         </div>
       )}
-    </div>
+    </InfiniteScroll>
   )
 }
 
 MessageStack.propTypes = {
   anchorID: PropTypes.string.isRequired,
   messages: PropTypes.array.isRequired,
-  subscribeToMessages: PropTypes.func.isRequired,
-  cancelSubscription: PropTypes.func.isRequired
+  subscribeToLastMessages: PropTypes.func.isRequired,
+  cancelSubscription: PropTypes.func.isRequired,
+  canILoadMore: PropTypes.bool.isRequired,
+  allMessagesLoaded: PropTypes.bool.isRequired,
+  loadMoreMessages: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => {
   return {
-    messages: state.chat.messages
+    messages: state.chat.messages,
+    canILoadMore: state.chat.canILoadMore,
+    allMessagesLoaded: state.chat.allMessagesLoaded
   }
 }
 
 const mapActionsToProps = (dispatch) => {
   return {
-    subscribeToMessages: () => dispatch(subscribeToMessagesAction()),
-    cancelSubscription: () => dispatch(cancelSubscriptionAction())
+    subscribeToLastMessages: () => dispatch(subscribeToLastMessagesAction()),
+    cancelSubscription: () => dispatch(cancelSubscriptionAction()),
+    loadMoreMessages: () => dispatch(loadMoreMessagesAction())
   }
 }
 
