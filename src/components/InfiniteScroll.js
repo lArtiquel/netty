@@ -13,27 +13,20 @@ const InfiniteScroll = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false)
   const scrollDiv = useRef(null)
-  const [scrollTop, setScrollTop] = useState(0)
 
   useEffect(() => {
     const thresholdValue = parseFloat(threshold)
     if (isNaN(thresholdValue) || thresholdValue < 0.4 || thresholdValue > 1)
       throw 'Threshold parameter is not in the range(0.4-1)!'
-    // remember initial scrollTop value (needed for reverse-order lists)
   }, [])
 
-  useEffect(() => {
-    console.log(scrollTop + scrollDiv.current.scrollTop)
-    setScrollTop(scrollTop + scrollDiv.current.scrollTop)
-  }, [children])
-
   function handleScroll() {
-    console.log(`scrolled px to top:${scrollTop - scrollDiv.current.scrollTop}`)
     if (!hasMore) return
     // offsetHeight - visible height in px of container with it's padding
-    // scrollTop - scrolled heigth in px
+    // scrollTop - scrolled height in px
     // scrollHeight - visible and non-visible height of container with it's padding
-    // threshold - value between 0.4 - 1
+    // so, offsetHeight + scrollTop = scrollHeight
+    // threshold - value between 0.4 - 1 when we need to trigger loadMore()
     if (!reverse) {
       if (
         scrollDiv.current.offsetHeight + scrollDiv.current.scrollTop <
@@ -41,8 +34,9 @@ const InfiniteScroll = ({
       )
         return
     } else if (
-      scrollDiv.current.offsetHeight + scrollTop - scrollDiv.current.scrollTop <
-      scrollDiv.current.scrollHeight * threshold
+      // chrome flexbox with column-reverse direction still having it's scrollTop at the container's top corner
+      scrollDiv.current.scrollHeight * (1 - threshold) <
+      scrollDiv.current.scrollTop
     )
       return
 

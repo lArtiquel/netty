@@ -50,7 +50,7 @@ const MessageStack = ({
         </div>
       }
       reverse
-      threshold={1}
+      threshold={0.9}
       materialStyle={styles.messageStackWrapper}
     >
       {messages.length ? (
