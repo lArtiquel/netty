@@ -1,28 +1,29 @@
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-restricted-syntax */
 import { ChatConstants } from '../../constants/actionConstants'
 import { ChatConfig } from '../../config/AppConfig'
 
 export const sendMessageAction = (newMessage) => {
-  return (dispatch, getState, { getFirestore }) => {
+  return async (dispatch, getState, { getFirestore }) => {
     const userId = getState().firebase.auth.uid
     const firestore = getFirestore()
 
     if (userId) {
-      firestore
-        .collection('chats')
-        .doc(`Netty-global`)
-        .collection('messages')
-        .doc()
-        .set({
-          userId,
-          body: newMessage.body,
-          createdAt: firestore.FieldValue.serverTimestamp()
-        })
-        .then(() => {
-          dispatch({ type: ChatConstants.MESSAGE_SEND_SUCCESS })
-        })
-        .catch((error) => {
-          dispatch({ type: ChatConstants.MESSAGE_SEND_ERROR, error })
-        })
+      try {
+        await firestore
+          .collection('chats')
+          .doc(`Netty-global`)
+          .collection('messages')
+          .doc()
+          .set({
+            userId,
+            body: newMessage.body,
+            createdAt: firestore.FieldValue.serverTimestamp()
+          })
+        dispatch({ type: ChatConstants.MESSAGE_SEND_SUCCESS })
+      } catch (error) {
+        dispatch({ type: ChatConstants.MESSAGE_SEND_ERROR, error })
+      }
     } else
       dispatch({
         type: ChatConstants.MESSAGE_SEND_ERROR,
@@ -43,45 +44,35 @@ export const subscribeToLastMessagesAction = () => {
       .orderBy('createdAt', 'desc')
       .limit(ChatConfig.MESSAGES_SUBSCRIPTION_THRESHOLD)
       .onSnapshot(
-        (snapshot) => {
-          const changes = snapshot.docChanges()
-          // create an initial immediately resolving promise, and then chain new promises as the previous ones resolve
-          // this needed because foreach is sync operation in JS and we won't get needed execution result order if we'll just run async operations inside of it
-          for (
-            let i = 0, promiseResolver = Promise.resolve();
-            i < changes.length;
-            i++
-          ) {
-            const change = changes[i]
-            if (change.type === 'added') {
-              promiseResolver = promiseResolver.then(
-                () =>
-                  new Promise((resolve) => {
-                    firestore
-                      .collection('userInfo')
-                      .doc(change.doc.data().userId)
-                      .get()
-                      .then((doc) => {
-                        messages.push({
-                          ...change.doc.data(),
-                          id: change.doc.id,
-                          photoURL: doc.data().photoURL,
-                          fname: doc.data().fname,
-                          sname: doc.data().sname
-                        })
-                        if (i === changes.length - 1) {
-                          dispatch({
-                            type: ChatConstants.SUBSCRIBED_MESSAGES_ADDED,
-                            messages
-                          })
-                        }
-                        // don't forget to resolve promise here
-                        resolve()
-                      })
-                  })
-              )
+        async (snapshot) => {
+          try {
+            const changes = snapshot.docChanges()
+
+            for (const change of changes) {
+              if (change.type === 'added') {
+                // making each loop cycle syncronous, so it won't mess up the message order
+                const userInfoDoc = await firestore
+                  .collection('userInfo')
+                  .doc(change.doc.data().userId)
+                  .get()
+                // collect full-info messages in loaded order
+                messages.push({
+                  ...change.doc.data(),
+                  id: change.doc.id,
+                  photoURL: userInfoDoc.data().photoURL,
+                  fname: userInfoDoc.data().fname,
+                  sname: userInfoDoc.data().sname
+                })
+              }
             }
+          } catch (error) {
+            console.log(error)
           }
+          // dispatch collected messages to state
+          dispatch({
+            type: ChatConstants.SUBSCRIBED_MESSAGES_ADDED,
+            messages
+          })
         },
         (error) => console.log(error.message)
       )
@@ -94,7 +85,7 @@ export const subscribeToLastMessagesAction = () => {
 }
 
 export const loadMoreMessagesAction = () => {
-  return (dispatch, getState, { getFirestore }) => {
+  return async (dispatch, getState, { getFirestore }) => {
     // first of all set `isBatchMsgsLoading` flag
     dispatch({ type: ChatConstants.TRIGGER_BATCH_LOADING_FLAG })
     const firestore = getFirestore()
@@ -102,61 +93,46 @@ export const loadMoreMessagesAction = () => {
     const lastMessageId = storedMessages[storedMessages.length - 1].id
     const newMessages = []
 
-    firestore
-      .collection('chats')
-      .doc('Netty-global')
-      .collection('messages')
-      .doc(lastMessageId)
-      .get()
-      .then((doc) => {
-        return firestore
-          .collection('chats')
-          .doc('Netty-global')
-          .collection('messages')
-          .orderBy('createdAt', 'desc')
-          .startAfter(doc)
-          .limit(ChatConfig.LOAD_MORE_MESSAGES_BATCH_SIZE)
+    try {
+      // get last doc by id
+      const lastDocMsg = await firestore
+        .collection('chats')
+        .doc('Netty-global')
+        .collection('messages')
+        .doc(lastMessageId)
+        .get()
+      // get batch of queried docMsgs
+      const docMsgsCollection = await firestore
+        .collection('chats')
+        .doc('Netty-global')
+        .collection('messages')
+        .orderBy('createdAt', 'desc')
+        .startAfter(lastDocMsg)
+        .limit(ChatConfig.LOAD_MORE_MESSAGES_BATCH_SIZE)
+        .get()
+      // loop thru docMsgs, get userInfo and push in array(note: loop executes sequentially)
+      for (const docMsg of docMsgsCollection.docs) {
+        const userInfoDoc = await firestore
+          .collection('userInfo')
+          .doc(docMsg.data().userId)
           .get()
+
+        newMessages.push({
+          ...docMsg.data(),
+          id: docMsg.id,
+          photoURL: userInfoDoc.data().photoURL,
+          fname: userInfoDoc.data().fname,
+          sname: userInfoDoc.data().sname
+        })
+      }
+      // dispatch batch of msgs to state
+      dispatch({
+        type: ChatConstants.LOAD_MORE_SUCCESSED,
+        newMessages
       })
-      .then((collection) => {
-        for (
-          let i = 0, promiseResolver = Promise.resolve();
-          i < collection.docs.length;
-          i++
-        ) {
-          const doc = collection.docs[i]
-          promiseResolver = promiseResolver.then(
-            () =>
-              new Promise((resolve) => {
-                firestore
-                  .collection('userInfo')
-                  .doc(doc.data().userId)
-                  .get()
-                  .then((userDoc) => {
-                    newMessages.push({
-                      ...doc.data(),
-                      id: doc.id,
-                      photoURL: userDoc.data().photoURL,
-                      fname: userDoc.data().fname,
-                      sname: userDoc.data().sname
-                    })
-                    if (i === collection.docs.length - 1) {
-                      console.log('newMessages:', newMessages)
-                      dispatch({
-                        type: ChatConstants.LOAD_MORE_SUCCESSED,
-                        newMessages
-                      })
-                    }
-                    // don't forget to resolve promise here
-                    resolve()
-                  })
-              })
-          )
-        }
-      })
-      .catch((error) => {
-        dispatch({ type: ChatConstants.LOAD_MORE_FAILED })
-      })
+    } catch (error) {
+      dispatch({ type: ChatConstants.LOAD_MORE_FAILED })
+    }
   }
 }
 
