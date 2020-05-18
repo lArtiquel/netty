@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles'
 
 const useStyles = makeStyles(() => ({
   centered: {
+    height: '100%',
     padding: '8px 0px',
     display: 'flex',
     alignItems: 'center',
