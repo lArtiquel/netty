@@ -28,9 +28,10 @@ const MessageStack = ({
   messages,
   subscribeToLastMessages,
   cancelSubscription,
-  canILoadMore,
-  allMessagesLoaded,
-  loadMoreMessages
+  hasMoreMsgs,
+  loadMoreMessages,
+  isFirstMsgsLoading,
+  isBatchMsgsLoading
 }) => {
   const styles = useStyles()
 
@@ -39,37 +40,38 @@ const MessageStack = ({
     return () => cancelSubscription()
   }, [])
 
+  const endMessage = (
+    <div style={{ textAlign: 'center' }}>
+      <p>Yay! You have seen them all!</p>
+    </div>
+  )
+
   return (
-    <InfiniteScroll
-      hasMore={canILoadMore && !allMessagesLoaded}
-      loadMore={() => loadMoreMessages()}
-      loader={<CircularProgress />}
-      endMessage={
-        <div style={{ textAlign: 'center' }}>
-          <p>Yay! You have seen them all!</p>
+    <>
+      {isFirstMsgsLoading ? (
+        <div className={styles.messageStackWrapper}>
+          <CircularProgress />
         </div>
-      }
-      reverse
-      threshold={0.9}
-      materialStyle={styles.messageStackWrapper}
-    >
-      {messages.length ? (
-        messages.map((message, index) => (
-          <div key={message.id} id={!index ? anchorID : undefined}>
-            <Message message={message} />
-          </div>
-        ))
       ) : (
-        <div
-          style={{
-            textAlign: 'center',
-            color: '#e0e0e0'
-          }}
+        <InfiniteScroll
+          hasMore={hasMoreMsgs}
+          loadMore={() => loadMoreMessages()}
+          isLoading={isBatchMsgsLoading}
+          loader={<CircularProgress />}
+          endMessage={endMessage}
+          isReverse
+          threshold={0.9}
+          materialStyle={styles.messageStackWrapper}
         >
-          <h4>No loaded messages for now...</h4>
-        </div>
+          {messages.length &&
+            messages.map((message, index) => (
+              <div key={message.id} id={!index ? anchorID : undefined}>
+                <Message message={message} />
+              </div>
+            ))}
+        </InfiniteScroll>
       )}
-    </InfiniteScroll>
+    </>
   )
 }
 
@@ -78,16 +80,18 @@ MessageStack.propTypes = {
   messages: PropTypes.array.isRequired,
   subscribeToLastMessages: PropTypes.func.isRequired,
   cancelSubscription: PropTypes.func.isRequired,
-  canILoadMore: PropTypes.bool.isRequired,
-  allMessagesLoaded: PropTypes.bool.isRequired,
-  loadMoreMessages: PropTypes.func.isRequired
+  hasMoreMsgs: PropTypes.bool.isRequired,
+  loadMoreMessages: PropTypes.func.isRequired,
+  isFirstMsgsLoading: PropTypes.bool.isRequired,
+  isBatchMsgsLoading: PropTypes.bool.isRequired
 }
 
 const mapStateToProps = (state) => {
   return {
     messages: state.chat.messages,
-    canILoadMore: state.chat.canILoadMore,
-    allMessagesLoaded: state.chat.allMessagesLoaded
+    hasMoreMsgs: state.chat.hasMoreMsgs,
+    isFirstMsgsLoading: state.chat.isFirstMsgsLoading,
+    isBatchMsgsLoading: state.chat.isBatchMsgsLoading
   }
 }
 

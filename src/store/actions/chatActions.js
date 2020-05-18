@@ -86,7 +86,6 @@ export const subscribeToLastMessagesAction = () => {
         (error) => console.log(error.message)
       )
     // store subscription handle in state
-    console.log('Subscribed to last `limit` messages!')
     dispatch({
       type: ChatConstants.STORE_SUBSCRIPTION_HANDLE,
       payload: subscriptionHandle
@@ -96,6 +95,8 @@ export const subscribeToLastMessagesAction = () => {
 
 export const loadMoreMessagesAction = () => {
   return (dispatch, getState, { getFirestore }) => {
+    // first of all set `isBatchMsgsLoading` flag
+    dispatch({ type: ChatConstants.TRIGGER_BATCH_LOADING_FLAG })
     const firestore = getFirestore()
     const storedMessages = getState().chat.messages
     const lastMessageId = storedMessages[storedMessages.length - 1].id
@@ -108,7 +109,6 @@ export const loadMoreMessagesAction = () => {
       .doc(lastMessageId)
       .get()
       .then((doc) => {
-        console.log(`last doc: `, doc.data())
         return firestore
           .collection('chats')
           .doc('Netty-global')
@@ -155,7 +155,6 @@ export const loadMoreMessagesAction = () => {
         }
       })
       .catch((error) => {
-        console.log('Load more error message:', error.message)
         dispatch({ type: ChatConstants.LOAD_MORE_FAILED })
       })
   }
@@ -163,7 +162,6 @@ export const loadMoreMessagesAction = () => {
 
 export const cancelSubscriptionAction = () => {
   return (dispatch, getState) => {
-    console.log('Subscription canceled!')
     const { subscriptionHandle } = getState().chat
     subscriptionHandle() // this function removes subscription listener
     dispatch({ type: ChatConstants.CANCEL_SUBSCRIPTION })

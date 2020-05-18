@@ -2,8 +2,9 @@ import React from 'react'
 import MaterialUICircularProgress from '@material-ui/core/CircularProgress'
 import { makeStyles } from '@material-ui/core/styles'
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   centered: {
+    padding: '8px 0px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center'
@@ -15,7 +16,7 @@ export default function CircularProgress() {
 
   return (
     <div className={styles.centered}>
-      <MaterialUICircularProgress />
+      <MaterialUICircularProgress disableShrink />
     </div>
   )
 }

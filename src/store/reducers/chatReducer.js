@@ -8,9 +8,10 @@ const initState = {
     message: ''
   },
   messages: [],
-  subscriptionHandler: () => {},
-  canILoadMore: false,
-  allMessagesLoaded: false
+  subscriptionHandler: () => {}, // every time component mounts - it should store subscription handle
+  isFirstMsgsLoading: true, // subscribe to last messages, store them in the state and determine hasMoreMsgs flag value
+  hasMoreMsgs: false, // so hasMoreMsgs value is undefined for now
+  isBatchMsgsLoading: false // after subscription msgs loaded we can use that flag to determine when new batch loading and show it in UI
 }
 
 const chatReducer = (state = initState, action) => {
@@ -41,48 +42,68 @@ const chatReducer = (state = initState, action) => {
       }
 
     case ChatConstants.SUBSCRIBED_MESSAGES_ADDED: {
-      // at the beginning those flags are falsy, cuz we don't need to loadMoreMessages if messages.length < MESSAGES_SUBSCRIPTION_THRESHOLD
-      if (!state.canILoadMore && !state.allMessagesLoaded)
+      // First batch of subscribed messages contains all `MESSAGES_SUBSCRIPTION_THRESHOLD` msgs
+      // so, if action.messages.length < MESSAGES_SUBSCRIPTION_THRESHOLD then it's all of them
+      if (state.isFirstMsgsLoading)
         if (
-          state.messages.length + action.messages.length >=
-          ChatConfig.MESSAGES_SUBSCRIPTION_THRESHOLD
-        )
+          action.messages.length < ChatConfig.MESSAGES_SUBSCRIPTION_THRESHOLD
+        ) {
           return {
             ...state,
-            canILoadMore: true,
+            isFirstMsgsLoading: false,
+            hasMoreMsgs: false,
             messages: [...action.messages, ...state.messages]
           }
+        } else {
+          return {
+            ...state,
+            isFirstMsgsLoading: false,
+            hasMoreMsgs: true,
+            messages: [...action.messages, ...state.messages]
+          }
+        }
+      // And this one for next subscribed messages which are came after first load
       return {
         ...state,
         messages: [...action.messages, ...state.messages]
       }
     }
 
+    case ChatConstants.TRIGGER_BATCH_LOADING_FLAG: {
+      return {
+        ...state,
+        isBatchMsgsLoading: true
+      }
+    }
+
     case ChatConstants.LOAD_MORE_SUCCESSED: {
-      // if new messages batch size less than planned => all loaded
+      // if new messages batch size less than `LOAD_MORE_MESSAGES_BATCH_SIZE` => all loaded
       if (action.newMessages.length < ChatConfig.LOAD_MORE_MESSAGES_BATCH_SIZE)
         return {
           ...state,
-          canILoadMore: false,
-          allMessagesLoaded: true,
+          hasMoreMsgs: false,
+          isBatchMsgsLoading: false,
           messages: [...state.messages, ...action.newMessages]
         }
+
       return {
         ...state,
+        isBatchMsgsLoading: false,
         messages: [...state.messages, ...action.newMessages]
       }
     }
 
     case ChatConstants.LOAD_MORE_FAILED: {
+      // if failed - stop loading new batches of messages and show modal
       return {
         ...state,
-        canILoadMore: false,
-        allMessagesLoaded: true,
+        hasMoreMsgs: false,
+        isBatchMsgsLoading: true,
         modal: {
           isOpen: true,
           title: 'Connection error',
           message:
-            'You can not reach the top without connection. Try to reload page later.'
+            'You can not reach the top without connection. Check internet connection and come back latter.'
         }
       }
     }
