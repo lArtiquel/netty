@@ -4,10 +4,14 @@ import Typography from '@material-ui/core/Typography'
 import { Divider } from '@material-ui/core'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { closeModalAction } from '../../../store/actions/chatActions'
 import MessageInput from './MessageInput'
 import ChatContainer from './ChatContainer'
 import Modal from '../../Modal'
+import UserInfoModal from './UserInfoModal'
+import {
+  closeModalAction,
+  closeUserInfoModalAction
+} from '../../../store/actions/chatActions'
 
 const useStyles = makeStyles((theme) => ({
   ...theme.speddable,
@@ -31,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-const Chat = ({ modal, closeModal }) => {
+const Chat = ({ modal, closeModal, userInfoModal, closeUserInfoModal }) => {
   const styles = useStyles()
 
   return (
@@ -57,24 +61,34 @@ const Chat = ({ modal, closeModal }) => {
           closeModalInState={closeModal}
         />
       )}
+      {userInfoModal.isOpen && (
+        <UserInfoModal
+          userInfoModal={userInfoModal}
+          closeDialogInState={closeUserInfoModal}
+        />
+      )}
     </div>
   )
 }
 
 Chat.propTypes = {
   modal: PropTypes.object.isRequired,
-  closeModal: PropTypes.func.isRequired
+  closeModal: PropTypes.func.isRequired,
+  userInfoModal: PropTypes.object.isRequired,
+  closeUserInfoModal: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => {
   return {
-    modal: state.chat.modal
+    modal: state.chat.modal,
+    userInfoModal: state.chat.userInfoModal
   }
 }
 
 const mapActionsToProps = (dispatch) => {
   return {
-    closeModal: () => dispatch(closeModalAction)
+    closeModal: () => dispatch(closeModalAction),
+    closeUserInfoModal: () => dispatch(closeUserInfoModalAction)
   }
 }
 

@@ -60,7 +60,7 @@ const MessageStack = ({
           loader={<CircularProgress />}
           endMessage={endMessage}
           isReverse
-          threshold={0.9}
+          threshold={0.85}
           materialStyle={styles.messageStackWrapper}
         >
           {messages.length &&

@@ -147,3 +147,32 @@ export const cancelSubscriptionAction = () => {
 export const closeModalAction = () => {
   return (dispatch) => dispatch({ type: ChatConstants.CLOSE_MODAL })
 }
+
+export const openUserInfoModalAction = (userId) => {
+  return async (dispatch, getState, { getFirestore }) => {
+    dispatch({ type: ChatConstants.OPEN_USER_INFO_MODAL })
+    const firestore = getFirestore()
+
+    setTimeout(() => {}, 1000)
+    try {
+      const userDoc = await firestore.collection('userInfo').doc(userId).get()
+
+      dispatch({
+        type: ChatConstants.USER_INFO_LOADED,
+        userInfo: {
+          fullname: `${userDoc.data().fname} ${userDoc.data().sname}`,
+          profilePic: userDoc.data().photoURL,
+          dob: userDoc.data().dob,
+          location: userDoc.data().location,
+          bio: userDoc.data().bio
+        }
+      })
+    } catch (error) {
+      dispatch({ type: ChatConstants.USER_INFO_LOAD_FAILED })
+    }
+  }
+}
+
+export const closeUserInfoModalAction = () => {
+  return (dispatch) => dispatch({ type: ChatConstants.CLOSE_USER_INFO_MODAL })
+}

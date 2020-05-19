@@ -49,7 +49,7 @@ const MyModal = ({ isOpen, title, message, closeModalInState }) => {
             <h2 id="transition-modal-title">{title}</h2>
             <p id="transition-modal-description">{message}</p>
             <Button onClick={handleClose} variant="contained" color="secondary">
-              Okay
+              Close
             </Button>
           </div>
         </Fade>
@@ -60,8 +60,8 @@ const MyModal = ({ isOpen, title, message, closeModalInState }) => {
 
 MyModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
-  title: PropTypes.string.isRequired,
-  message: PropTypes.string.isRequired,
+  title: PropTypes.node.isRequired,
+  message: PropTypes.node.isRequired,
   closeModalInState: PropTypes.func.isRequired
 }
 

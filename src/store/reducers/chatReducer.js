@@ -7,6 +7,17 @@ const initState = {
     title: '',
     message: ''
   },
+  userInfoModal: {
+    // this modal is used to display userInfo when clicking on user name in chat
+    isOpen: false,
+    isLoading: false,
+    isError: false,
+    fullname: '',
+    profilePic: '',
+    dob: '',
+    location: '',
+    bio: ''
+  },
   messages: [],
   subscriptionHandler: () => {}, // every time component mounts - it should store subscription handle
   isFirstMsgsLoading: true, // subscribe to last messages, store them in the state and determine hasMoreMsgs flag value
@@ -125,6 +136,52 @@ const chatReducer = (state = initState, action) => {
       // means if component which possessed that info destroyed, this state is gone too
       return {
         ...initState
+      }
+    }
+
+    case ChatConstants.OPEN_USER_INFO_MODAL: {
+      return {
+        ...state,
+        userInfoModal: {
+          ...state.userInfoModal,
+          isOpen: true,
+          isLoading: true
+        }
+      }
+    }
+
+    case ChatConstants.USER_INFO_LOADED: {
+      return {
+        ...state,
+        userInfoModal: {
+          ...state.userInfoModal,
+          isLoading: false,
+          fullname: action.userInfo.fullname,
+          profilePic: action.userInfo.profilePic,
+          dob: action.userInfo.dob,
+          location: action.userInfo.location,
+          bio: action.userInfo.bio
+        }
+      }
+    }
+
+    case ChatConstants.USER_INFO_LOAD_FAILED: {
+      return {
+        ...state,
+        userInfoModal: {
+          ...state.userInfoModal,
+          isLoading: false,
+          isError: true
+        }
+      }
+    }
+
+    case ChatConstants.CLOSE_USER_INFO_MODAL: {
+      return {
+        ...state,
+        userInfoModal: {
+          ...initState.userInfoModal
+        }
       }
     }
 

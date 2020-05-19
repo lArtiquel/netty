@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
+/* eslint-disable react/jsx-one-expression-per-line */
 import React from 'react'
 import Box from '@material-ui/core/Box'
 import Paper from '@material-ui/core/Paper'
@@ -6,6 +8,9 @@ import Typography from '@material-ui/core/Typography'
 import PropTypes from 'prop-types'
 import * as dayjs from 'dayjs'
 import { makeStyles } from '@material-ui/core/styles'
+import Link from '@material-ui/core/Link'
+import { connect } from 'react-redux'
+import { openUserInfoModalAction } from '../../../store/actions/chatActions'
 
 const useStyles = makeStyles((theme) => ({
   avatar: {
@@ -14,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-const Message = ({ message }) => {
+const Message = ({ message, openUserInfoModal }) => {
   const styles = useStyles()
   // when new message sent to server it takes some time to set serverTimestamp
   // we are receiving null at createdAt when new message listener pops up new message
@@ -40,9 +45,14 @@ const Message = ({ message }) => {
                 flexGrow={1}
                 color="#90caf9"
               >
-                <Typography variant="subtitle2" gutterBottom>
+                <Link
+                  color="inherit"
+                  component="button"
+                  variant="subtitle2"
+                  onClick={() => openUserInfoModal(message.userId)}
+                >
                   {message.fname} {message.sname}
-                </Typography>
+                </Link>
               </Box>
               <Box
                 display="flex"
@@ -51,9 +61,7 @@ const Message = ({ message }) => {
                 alignItems="center"
                 color="grey.600"
               >
-                <Typography variant="subtitle2" gutterBottom>
-                  {/* {message.createdAt} -- careful, it's obj! */}
-                  {/* 01.01.2020 3:30 PM */}
+                <Typography variant="caption" gutterBottom>
                   {timestamp}
                 </Typography>
               </Box>
@@ -69,7 +77,14 @@ const Message = ({ message }) => {
 }
 
 Message.propTypes = {
-  message: PropTypes.object.isRequired
+  message: PropTypes.object.isRequired,
+  openUserInfoModal: PropTypes.func.isRequired
 }
 
-export default Message
+const mapActionsToProps = (dispatch) => {
+  return {
+    openUserInfoModal: (userId) => dispatch(openUserInfoModalAction(userId))
+  }
+}
+
+export default connect(null, mapActionsToProps)(Message)
