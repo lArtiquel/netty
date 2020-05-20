@@ -148,12 +148,11 @@ export const closeModalAction = () => {
   return (dispatch) => dispatch({ type: ChatConstants.CLOSE_MODAL })
 }
 
-export const openUserInfoModalAction = (userId) => {
+export const openUserProfilePopupAction = (userId) => {
   return async (dispatch, getState, { getFirestore }) => {
     dispatch({ type: ChatConstants.OPEN_USER_INFO_MODAL })
     const firestore = getFirestore()
 
-    setTimeout(() => {}, 1000)
     try {
       const userDoc = await firestore.collection('userInfo').doc(userId).get()
 
@@ -173,6 +172,6 @@ export const openUserInfoModalAction = (userId) => {
   }
 }
 
-export const closeUserInfoModalAction = () => {
+export const closeUserProfilePopupAction = () => {
   return (dispatch) => dispatch({ type: ChatConstants.CLOSE_USER_INFO_MODAL })
 }

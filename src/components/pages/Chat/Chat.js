@@ -7,10 +7,10 @@ import { connect } from 'react-redux'
 import MessageInput from './MessageInput'
 import ChatContainer from './ChatContainer'
 import Modal from '../../Modal'
-import UserInfoModal from './UserInfoModal'
+import UserProfilePopup from './UserProfilePopup'
 import {
   closeModalAction,
-  closeUserInfoModalAction
+  closeUserProfilePopupAction
 } from '../../../store/actions/chatActions'
 
 const useStyles = makeStyles((theme) => ({
@@ -35,7 +35,12 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-const Chat = ({ modal, closeModal, userInfoModal, closeUserInfoModal }) => {
+const Chat = ({
+  modal,
+  closeModal,
+  userProfilePopup,
+  closeUserProfilePopup
+}) => {
   const styles = useStyles()
 
   return (
@@ -53,6 +58,7 @@ const Chat = ({ modal, closeModal, userInfoModal, closeUserInfoModal }) => {
       <div className="messageInput">
         <MessageInput />
       </div>
+
       {modal.isOpen && (
         <Modal
           isOpen
@@ -61,10 +67,12 @@ const Chat = ({ modal, closeModal, userInfoModal, closeUserInfoModal }) => {
           closeModalInState={closeModal}
         />
       )}
-      {userInfoModal.isOpen && (
-        <UserInfoModal
-          userInfoModal={userInfoModal}
-          closeDialogInState={closeUserInfoModal}
+
+      {userProfilePopup.isOpen && (
+        <UserProfilePopup
+          isOpen
+          userProfilePopup={userProfilePopup}
+          closePopupInState={closeUserProfilePopup}
         />
       )}
     </div>
@@ -74,21 +82,21 @@ const Chat = ({ modal, closeModal, userInfoModal, closeUserInfoModal }) => {
 Chat.propTypes = {
   modal: PropTypes.object.isRequired,
   closeModal: PropTypes.func.isRequired,
-  userInfoModal: PropTypes.object.isRequired,
-  closeUserInfoModal: PropTypes.func.isRequired
+  userProfilePopup: PropTypes.object.isRequired,
+  closeUserProfilePopup: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => {
   return {
     modal: state.chat.modal,
-    userInfoModal: state.chat.userInfoModal
+    userProfilePopup: state.chat.userProfilePopup
   }
 }
 
 const mapActionsToProps = (dispatch) => {
   return {
-    closeModal: () => dispatch(closeModalAction),
-    closeUserInfoModal: () => dispatch(closeUserInfoModalAction)
+    closeModal: () => dispatch(closeModalAction()),
+    closeUserProfilePopup: () => dispatch(closeUserProfilePopupAction())
   }
 }
 

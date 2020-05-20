@@ -8,6 +8,7 @@ import LocationOnOutlinedIcon from '@material-ui/icons/LocationOnOutlined'
 import FingerprintOutlinedIcon from '@material-ui/icons/FingerprintOutlined'
 import Divider from '@material-ui/core/Divider'
 import PropTypes from 'prop-types'
+import Avatar from '@material-ui/core/Avatar'
 import CircularProgress from '../../CircularProgress'
 import Dialog from '../../Dialog'
 
@@ -19,29 +20,29 @@ const useStyles = makeStyles(() => ({
   }
 }))
 
-const UserInfoModal = ({ userInfoModal, closeDialogInState }) => {
+const UserProfilePopup = ({ isOpen, userProfilePopup, closePopupInState }) => {
   const styles = useStyles()
 
   const resolveTitle = () => {
-    if (userInfoModal.isError)
+    if (userProfilePopup.isError)
       return 'Ups, an error occured... Please try later.'
 
-    if (userInfoModal.isLoading) return 'Loading... Please, wait.'
+    if (userProfilePopup.isLoading) return 'Loading... Please, wait.'
 
-    return userInfoModal.fullname
+    return userProfilePopup.data.fullname
   }
 
   const resolveBody = () => {
-    if (userInfoModal.isLoading || userInfoModal.isError)
+    if (userProfilePopup.isLoading || userProfilePopup.isError)
       return <CircularProgress />
 
     return (
       <>
         <Box display="flex" justifyContent="center" alignItems="center" pb={2}>
-          <img
+          <Avatar
+            variant="rounded"
             className={styles.profileImageWrapper}
-            src={`${userInfoModal.profilePic}`}
-            alt="Profile pic here"
+            src={`${userProfilePopup.data.profilePic}`}
           />
         </Box>
         <Divider />
@@ -58,7 +59,7 @@ const UserInfoModal = ({ userInfoModal, closeDialogInState }) => {
                 ),
                 readOnly: true
               }}
-              defaultValue={userInfoModal.dob}
+              defaultValue={userProfilePopup.data.dob}
             />
           </Box>
           <Box ml={1}>
@@ -74,8 +75,8 @@ const UserInfoModal = ({ userInfoModal, closeDialogInState }) => {
                 readOnly: true
               }}
               defaultValue={
-                userInfoModal.location
-                  ? userInfoModal.location
+                userProfilePopup.data.location
+                  ? userProfilePopup.data.location
                   : 'Location is not specified.'
               }
             />
@@ -94,7 +95,9 @@ const UserInfoModal = ({ userInfoModal, closeDialogInState }) => {
             readOnly: true
           }}
           defaultValue={
-            userInfoModal.bio ? userInfoModal.bio : 'No biography for now.'
+            userProfilePopup.data.bio
+              ? userProfilePopup.data.bio
+              : 'No biography for now.'
           }
           multiline
           rows={5}
@@ -105,16 +108,18 @@ const UserInfoModal = ({ userInfoModal, closeDialogInState }) => {
 
   return (
     <Dialog
+      isOpen={isOpen}
       title={resolveTitle()}
       body={resolveBody()}
-      closeDialogInState={closeDialogInState}
+      closeDialogInState={closePopupInState}
     />
   )
 }
 
-UserInfoModal.propTypes = {
-  userInfoModal: PropTypes.object.isRequired,
-  closeDialogInState: PropTypes.func.isRequired
+UserProfilePopup.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  userProfilePopup: PropTypes.object.isRequired,
+  closePopupInState: PropTypes.func.isRequired
 }
 
-export default UserInfoModal
+export default UserProfilePopup

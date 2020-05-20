@@ -10,7 +10,7 @@ import * as dayjs from 'dayjs'
 import { makeStyles } from '@material-ui/core/styles'
 import Link from '@material-ui/core/Link'
 import { connect } from 'react-redux'
-import { openUserInfoModalAction } from '../../../store/actions/chatActions'
+import { openUserProfilePopupAction } from '../../../store/actions/chatActions'
 
 const useStyles = makeStyles((theme) => ({
   avatar: {
@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-const Message = ({ message, openUserInfoModal }) => {
+const Message = ({ message, openUserProfilePopup }) => {
   const styles = useStyles()
   // when new message sent to server it takes some time to set serverTimestamp
   // we are receiving null at createdAt when new message listener pops up new message
@@ -32,7 +32,7 @@ const Message = ({ message, openUserInfoModal }) => {
   return (
     <Box my={1}>
       <Paper variant="outlined">
-        <Box display="flex" flexDirection="row" px={2} py={1} boxShadow={4}>
+        <Box display="flex" flexDirection="row" p={1} boxShadow={6}>
           <Avatar src={message.photoURL} className={styles.avatar}>
             {message.fname[0]}
             {message.sname[0]}
@@ -49,7 +49,7 @@ const Message = ({ message, openUserInfoModal }) => {
                   color="inherit"
                   component="button"
                   variant="subtitle2"
-                  onClick={() => openUserInfoModal(message.userId)}
+                  onClick={() => openUserProfilePopup(message.userId)}
                 >
                   {message.fname} {message.sname}
                 </Link>
@@ -61,7 +61,7 @@ const Message = ({ message, openUserInfoModal }) => {
                 alignItems="center"
                 color="grey.600"
               >
-                <Typography variant="caption" gutterBottom>
+                <Typography align="center" variant="caption" gutterBottom>
                   {timestamp}
                 </Typography>
               </Box>
@@ -78,12 +78,13 @@ const Message = ({ message, openUserInfoModal }) => {
 
 Message.propTypes = {
   message: PropTypes.object.isRequired,
-  openUserInfoModal: PropTypes.func.isRequired
+  openUserProfilePopup: PropTypes.func.isRequired
 }
 
 const mapActionsToProps = (dispatch) => {
   return {
-    openUserInfoModal: (userId) => dispatch(openUserInfoModalAction(userId))
+    openUserProfilePopup: (userId) =>
+      dispatch(openUserProfilePopupAction(userId))
   }
 }
 

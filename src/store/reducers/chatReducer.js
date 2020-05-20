@@ -7,16 +7,18 @@ const initState = {
     title: '',
     message: ''
   },
-  userInfoModal: {
+  userProfilePopup: {
     // this modal is used to display userInfo when clicking on user name in chat
     isOpen: false,
     isLoading: false,
     isError: false,
-    fullname: '',
-    profilePic: '',
-    dob: '',
-    location: '',
-    bio: ''
+    data: {
+      fullname: '',
+      profilePic: '',
+      dob: '',
+      location: '',
+      bio: ''
+    }
   },
   messages: [],
   subscriptionHandler: () => {}, // every time component mounts - it should store subscription handle
@@ -142,8 +144,8 @@ const chatReducer = (state = initState, action) => {
     case ChatConstants.OPEN_USER_INFO_MODAL: {
       return {
         ...state,
-        userInfoModal: {
-          ...state.userInfoModal,
+        userProfilePopup: {
+          ...state.userProfilePopup,
           isOpen: true,
           isLoading: true
         }
@@ -153,14 +155,16 @@ const chatReducer = (state = initState, action) => {
     case ChatConstants.USER_INFO_LOADED: {
       return {
         ...state,
-        userInfoModal: {
-          ...state.userInfoModal,
+        userProfilePopup: {
+          ...state.userProfilePopup,
           isLoading: false,
-          fullname: action.userInfo.fullname,
-          profilePic: action.userInfo.profilePic,
-          dob: action.userInfo.dob,
-          location: action.userInfo.location,
-          bio: action.userInfo.bio
+          data: {
+            fullname: action.userInfo.fullname,
+            profilePic: action.userInfo.profilePic,
+            dob: action.userInfo.dob,
+            location: action.userInfo.location,
+            bio: action.userInfo.bio
+          }
         }
       }
     }
@@ -168,8 +172,8 @@ const chatReducer = (state = initState, action) => {
     case ChatConstants.USER_INFO_LOAD_FAILED: {
       return {
         ...state,
-        userInfoModal: {
-          ...state.userInfoModal,
+        userProfilePopup: {
+          ...state.userProfilePopup,
           isLoading: false,
           isError: true
         }
@@ -179,8 +183,8 @@ const chatReducer = (state = initState, action) => {
     case ChatConstants.CLOSE_USER_INFO_MODAL: {
       return {
         ...state,
-        userInfoModal: {
-          ...initState.userInfoModal
+        userProfilePopup: {
+          ...initState.userProfilePopup
         }
       }
     }

@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { createStore, applyMiddleware, compose } from 'redux'
 import thunk from 'redux-thunk'
 import { getFirebase } from 'react-redux-firebase'
@@ -18,14 +19,17 @@ const rrfConfig = {
 
 const initialStoreState = {}
 
-const store = createStore(
-  rootReducer,
-  initialStoreState,
-  compose(
-    applyMiddleware(thunk.withExtraArgument({ getFirebase, getFirestore })),
-    reduxFirestore(firebase, firebaseConfig)
-  )
+const composeEnhancers =
+  typeof window === 'object' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+    ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
+        // Specify extension’s options like name, actionsBlacklist, actionsCreators, serialize...
+      })
+    : compose
+const enhancer = composeEnhancers(
+  applyMiddleware(thunk.withExtraArgument({ getFirebase, getFirestore })),
+  reduxFirestore(firebase, firebaseConfig)
 )
+const store = createStore(rootReducer, initialStoreState, enhancer)
 
 // react-redux-firebase props for RRF provider
 export const RRFProps = {
