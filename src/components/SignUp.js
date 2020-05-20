@@ -5,7 +5,7 @@ import Dialog from '@material-ui/core/Dialog'
 import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
 import DialogTitle from '@material-ui/core/DialogTitle'
-import DialogContentText from '@material-ui/core/DialogContentText'
+import Typography from '@material-ui/core/Typography'
 import Alert from '@material-ui/lab/Alert'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
@@ -13,13 +13,14 @@ import {
   signUpAction,
   clearAuthErrorAction
 } from '../store/actions/authActions'
+import CoolButton from './CoolButton'
 
 const INITIAL_FORM_STATE = {
   email: '',
   password: '',
   fname: '',
   sname: '',
-  dob: '2000-01-01',
+  dob: '',
   location: '',
   bio: ''
 }
@@ -55,9 +56,13 @@ const SignUp = ({ signUp, authError, clearError }) => {
 
   return (
     <div>
-      <Button color="primary" variant="contained" onClick={() => setOpen(true)}>
+      <CoolButton
+        color="blue"
+        variant="contained"
+        onClick={() => setOpen(true)}
+      >
         Sign Up
-      </Button>
+      </CoolButton>
       <Dialog
         open={open}
         onClose={handleClose}
@@ -67,7 +72,7 @@ const SignUp = ({ signUp, authError, clearError }) => {
           <DialogTitle id="form-dialog-title">Please, Sign Up</DialogTitle>
           {authError ? <Alert severity="error">{authError}</Alert> : null}
           <DialogContent dividers>
-            <DialogContentText>Your login info</DialogContentText>
+            <Typography gutterBottom>Type your credentials</Typography>
             <TextField
               autoFocus
               margin="dense"
@@ -92,7 +97,7 @@ const SignUp = ({ signUp, authError, clearError }) => {
             />
           </DialogContent>
           <DialogContent dividers>
-            <DialogContentText>Your personal info</DialogContentText>
+            <Typography gutterBottom>Type your personal info</Typography>
             <TextField
               margin="dense"
               name="fname"
@@ -121,6 +126,7 @@ const SignUp = ({ signUp, authError, clearError }) => {
               required
               onChange={handleFormChange}
               value={form.dob}
+              InputLabelProps={{ shrink: true }}
             />
             <TextField
               margin="dense"

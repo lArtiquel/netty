@@ -141,6 +141,7 @@ const UserInfoForm = ({
                 type="date"
                 onChange={onChange}
                 value={userInfo.dob}
+                InputLabelProps={{ shrink: true }}
               />
               <TextField
                 margin="dense"

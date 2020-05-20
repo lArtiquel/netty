@@ -48,7 +48,6 @@ export const subscribeToLastMessagesAction = () => {
           const changes = snapshot.docChanges()
           try {
             for (const change of changes) {
-              console.log(change)
               if (change.type === 'added') {
                 // making each loop cycle syncronous, so it won't mess up the message order
                 const userInfoDoc = await firestore

@@ -12,6 +12,7 @@ import {
   signInAction,
   clearAuthErrorAction
 } from '../store/actions/authActions'
+import CoolButton from './CoolButton'
 
 function SignIn({ signIn, authError, clearError }) {
   const [open, setOpen] = useState(false)
@@ -37,9 +38,9 @@ function SignIn({ signIn, authError, clearError }) {
 
   return (
     <div>
-      <Button color="primary" variant="contained" onClick={() => setOpen(true)}>
+      <CoolButton color="red" variant="contained" onClick={() => setOpen(true)}>
         Sign In
-      </Button>
+      </CoolButton>
       <Dialog
         open={open}
         onClose={closeDialog}

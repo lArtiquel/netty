@@ -1,45 +1,62 @@
+/* eslint-disable react/jsx-one-expression-per-line */
 import React from 'react'
 import { withRouter } from 'react-router'
-import Container from '@material-ui/core/Container'
-import { makeStyles } from '@material-ui/core/styles'
+import Box from '@material-ui/core/Box'
 import Typography from '@material-ui/core/Typography'
 import SignIn from '../SignIn'
 import SignUp from '../SignUp'
 import { UserIsNotAuthenticated } from '../../utils/AuthHOC'
 
-const useStyles = makeStyles((theme) => ({
-  ...theme.spreddable
-}))
-
 const Home = () => {
-  const styles = useStyles()
-
   return (
-    <div className={styles.largeWrapper}>
-      <Container>
+    <Box
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+      flexDirection="column"
+      p={3}
+      height="100%"
+    >
+      <Box pb={6}>
         <Typography variant="h3" gutterBottom>
           Welcome to Netty!
         </Typography>
-        <img
-          className={styles.icon}
-          alt="Netty"
-          src={`${process.env.PUBLIC_URL}/img/netty.png`}
-        />
-        <Typography color="secondary" variant="h5" gutterBottom>
-          Your next <br /> best <br /> social app. <br />
+      </Box>
+
+      <Box py={1}>
+        <img alt="Netty" src={`${process.env.PUBLIC_URL}/img/netty.png`} />
+      </Box>
+
+      <Box py={1}>
+        <Typography align="center" color="secondary" variant="h5" gutterBottom>
+          Your next
+          <br />
+          best
+          <br />
+          social network.
+          <br />
           So,
+          <br />
+          What you are waiting for?
+          <br />
+          Choose your pill...
         </Typography>
-        <div className={styles.smallWrapper}>
-          <SignIn />
-        </div>
+      </Box>
+
+      <Box py={2}>
+        <SignIn />
+      </Box>
+
+      <Box py={2}>
         <Typography color="secondary" variant="h5" gutterBottom>
           Or
         </Typography>
-        <div className={styles.smallWrapper}>
-          <SignUp />
-        </div>
-      </Container>
-    </div>
+      </Box>
+
+      <Box py={2}>
+        <SignUp />
+      </Box>
+    </Box>
   )
 }
 
