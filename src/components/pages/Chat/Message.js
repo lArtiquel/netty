@@ -26,7 +26,7 @@ const Message = ({ message, openUserProfilePopup }) => {
   // so i decided to display local client time until serverTimestamp retrieving from token of server side
   // and yes, we could set serverTimestamp intstead of this with next event, but we are not listening "modify" events
   const timestamp = message.createdAt
-    ? dayjs(message.createdAt.milliseconds).format('YYYY/MM/DD h:mm A')
+    ? dayjs.unix(message.createdAt.seconds).format('YYYY/MM/DD h:mm A')
     : dayjs(Date.now()).format('YYYY/MM/DD h:mm A')
 
   return (

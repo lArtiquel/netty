@@ -35,7 +35,6 @@ export const sendMessageAction = (newMessage) => {
 export const subscribeToLastMessagesAction = () => {
   return (dispatch, getState, { getFirestore }) => {
     const firestore = getFirestore()
-    const messages = []
 
     const subscriptionHandle = firestore
       .collection('chats')
@@ -45,10 +44,11 @@ export const subscribeToLastMessagesAction = () => {
       .limit(ChatConfig.MESSAGES_SUBSCRIPTION_THRESHOLD)
       .onSnapshot(
         async (snapshot) => {
+          const messages = []
+          const changes = snapshot.docChanges()
           try {
-            const changes = snapshot.docChanges()
-
             for (const change of changes) {
+              console.log(change)
               if (change.type === 'added') {
                 // making each loop cycle syncronous, so it won't mess up the message order
                 const userInfoDoc = await firestore
