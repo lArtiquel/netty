@@ -1,19 +1,18 @@
 import React, { useState } from 'react'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
-import Dialog from '@material-ui/core/Dialog'
-import DialogActions from '@material-ui/core/DialogActions'
-import DialogContent from '@material-ui/core/DialogContent'
-import DialogTitle from '@material-ui/core/DialogTitle'
+import Box from '@material-ui/core/Box'
 import Typography from '@material-ui/core/Typography'
 import Alert from '@material-ui/lab/Alert'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import {
+  openSignUpFormAction,
   signUpAction,
-  clearAuthErrorAction
+  closeSignUpFormAction
 } from '../store/actions/authActions'
 import CoolButton from './CoolButton'
+import Dialog from './Dialog'
 
 const INITIAL_FORM_STATE = {
   email: '',
@@ -25,26 +24,29 @@ const INITIAL_FORM_STATE = {
   bio: ''
 }
 
-const SignUp = ({ signUp, authError, clearError }) => {
-  const [open, setOpen] = useState(false)
+const SignUp = ({
+  isSignUpOpened,
+  openSignUpForm,
+  closeSignUpForm,
+  signUp,
+  authError
+}) => {
   const [form, setForm] = useState(INITIAL_FORM_STATE)
 
-  const resetForm = () => {
+  const closeAndCleanUp = () => {
+    // close dialog
+    closeSignUpForm()
+    // set form to init state
     setForm(INITIAL_FORM_STATE)
-    clearError()
   }
 
   const handleClose = () => {
-    setOpen(false)
-    resetForm()
+    closeAndCleanUp()
   }
 
-  const handleSubmit = (e) => {
-    // don't forget to prevent default form submit behaviour
-    e.preventDefault()
-    // dispatch signUp action
+  const handleSubmit = () => {
+    // on success it'll automatically close dialog and clear error state
     signUp(form)
-    resetForm()
   }
 
   const handleFormChange = (e) => {
@@ -54,25 +56,14 @@ const SignUp = ({ signUp, authError, clearError }) => {
     })
   }
 
-  return (
-    <div>
-      <CoolButton
-        color="blue"
-        variant="contained"
-        onClick={() => setOpen(true)}
-      >
-        Sign Up
-      </CoolButton>
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="form-dialog-title"
-      >
-        <form onSubmit={handleSubmit}>
-          <DialogTitle id="form-dialog-title">Please, Sign Up</DialogTitle>
-          {authError ? <Alert severity="error">{authError}</Alert> : null}
-          <DialogContent dividers>
-            <Typography gutterBottom>Type your credentials</Typography>
+  const resolveBody = () => {
+    return (
+      <>
+        <Box mb={2} borderRadius={8} boxShadow={4}>
+          <Box px={2} py={1}>
+            <Typography align="center" gutterBottom>
+              Type your credentials
+            </Typography>
             <TextField
               autoFocus
               margin="dense"
@@ -95,9 +86,16 @@ const SignUp = ({ signUp, authError, clearError }) => {
               onChange={handleFormChange}
               value={form.password}
             />
-          </DialogContent>
-          <DialogContent dividers>
-            <Typography gutterBottom>Type your personal info</Typography>
+          </Box>
+        </Box>
+
+        {authError ? <Alert severity="error">{authError}</Alert> : null}
+
+        <Box mt={2} borderRadius={8} boxShadow={4}>
+          <Box px={2} py={1}>
+            <Typography align="center" gutterBottom>
+              Type your personal info
+            </Typography>
             <TextField
               margin="dense"
               name="fname"
@@ -148,38 +146,63 @@ const SignUp = ({ signUp, authError, clearError }) => {
               onChange={handleFormChange}
               value={form.bio}
             />
-          </DialogContent>
-          <DialogActions>
-            <Button variant="contained" onClick={handleClose} color="secondary">
-              Cancel
-            </Button>
-            <Button type="submit" variant="contained" color="primary">
-              Sign Up
-            </Button>
-          </DialogActions>
-        </form>
-      </Dialog>
-    </div>
+          </Box>
+        </Box>
+      </>
+    )
+  }
+
+  const resolveButtons = () => {
+    return (
+      <>
+        <Button variant="contained" onClick={handleClose} color="secondary">
+          Cancel
+        </Button>
+        <Button variant="contained" onClick={handleSubmit} color="primary">
+          Sign Up
+        </Button>
+      </>
+    )
+  }
+
+  return (
+    <>
+      <CoolButton color="blue" onClick={openSignUpForm}>
+        Sign Up
+      </CoolButton>
+
+      {isSignUpOpened && (
+        <Dialog
+          title="Please, Sign Up"
+          body={resolveBody()}
+          buttons={resolveButtons()}
+          closeDialogInState={closeSignUpForm}
+        />
+      )}
+    </>
   )
 }
 
 SignUp.propTypes = {
+  isSignUpOpened: PropTypes.bool.isRequired,
+  openSignUpForm: PropTypes.func.isRequired,
+  closeSignUpForm: PropTypes.func.isRequired,
   signUp: PropTypes.func.isRequired,
-  authError: PropTypes.string.isRequired,
-  clearError: PropTypes.func.isRequired
+  authError: PropTypes.string.isRequired
 }
 
 const mapStateToProps = (state) => {
   return {
+    isSignUpOpened: state.auth.isSignUpOpened,
     authError: state.auth.authError
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    // this prop dispatches an action in store
+    openSignUpForm: () => dispatch(openSignUpFormAction()),
     signUp: (newUser) => dispatch(signUpAction(newUser)),
-    clearError: () => dispatch(clearAuthErrorAction())
+    closeSignUpForm: () => dispatch(closeSignUpFormAction())
   }
 }
 

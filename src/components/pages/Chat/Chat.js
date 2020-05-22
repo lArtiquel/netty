@@ -8,10 +8,7 @@ import MessageInput from './MessageInput'
 import ChatContainer from './ChatContainer'
 import Modal from '../../Modal'
 import UserProfilePopup from './UserProfilePopup'
-import {
-  closeModalAction,
-  closeUserProfilePopupAction
-} from '../../../store/actions/chatActions'
+import { closeModalAction } from '../../../store/actions/chatActions'
 
 const useStyles = makeStyles((theme) => ({
   ...theme.speddable,
@@ -35,12 +32,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-const Chat = ({
-  modal,
-  closeModal,
-  userProfilePopup,
-  closeUserProfilePopup
-}) => {
+const Chat = ({ modal, closeModal }) => {
   const styles = useStyles()
 
   return (
@@ -68,35 +60,25 @@ const Chat = ({
         />
       )}
 
-      {userProfilePopup.isOpen && (
-        <UserProfilePopup
-          isOpen
-          userProfilePopup={userProfilePopup}
-          closePopupInState={closeUserProfilePopup}
-        />
-      )}
+      <UserProfilePopup />
     </div>
   )
 }
 
 Chat.propTypes = {
   modal: PropTypes.object.isRequired,
-  closeModal: PropTypes.func.isRequired,
-  userProfilePopup: PropTypes.object.isRequired,
-  closeUserProfilePopup: PropTypes.func.isRequired
+  closeModal: PropTypes.func.isRequired
 }
 
 const mapStateToProps = (state) => {
   return {
-    modal: state.chat.modal,
-    userProfilePopup: state.chat.userProfilePopup
+    modal: state.chat.modal
   }
 }
 
 const mapActionsToProps = (dispatch) => {
   return {
-    closeModal: () => dispatch(closeModalAction()),
-    closeUserProfilePopup: () => dispatch(closeUserProfilePopupAction())
+    closeModal: () => dispatch(closeModalAction())
   }
 }
 

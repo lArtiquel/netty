@@ -3,14 +3,17 @@ import { makeStyles } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
 import InputAdornment from '@material-ui/core/InputAdornment'
 import Box from '@material-ui/core/Box'
+import Button from '@material-ui/core/Button'
 import EventOutlinedIcon from '@material-ui/icons/EventOutlined'
 import LocationOnOutlinedIcon from '@material-ui/icons/LocationOnOutlined'
 import FingerprintOutlinedIcon from '@material-ui/icons/FingerprintOutlined'
 import Divider from '@material-ui/core/Divider'
-import PropTypes from 'prop-types'
 import Avatar from '@material-ui/core/Avatar'
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 import CircularProgress from '../../CircularProgress'
 import Dialog from '../../Dialog'
+import { closeUserProfilePopupAction } from '../../../store/actions/chatActions'
 
 const useStyles = makeStyles(() => ({
   profileImageWrapper: {
@@ -20,7 +23,7 @@ const useStyles = makeStyles(() => ({
   }
 }))
 
-const UserProfilePopup = ({ isOpen, userProfilePopup, closePopupInState }) => {
+const UserProfilePopup = ({ userProfilePopup, closePopup }) => {
   const styles = useStyles()
 
   const resolveTitle = () => {
@@ -106,20 +109,45 @@ const UserProfilePopup = ({ isOpen, userProfilePopup, closePopupInState }) => {
     )
   }
 
+  const resolveButtons = () => {
+    return (
+      <>
+        <Button variant="contained" onClick={closePopup} color="secondary">
+          Close
+        </Button>
+      </>
+    )
+  }
+
   return (
-    <Dialog
-      isOpen={isOpen}
-      title={resolveTitle()}
-      body={resolveBody()}
-      closeDialogInState={closePopupInState}
-    />
+    <>
+      {userProfilePopup.isOpen && (
+        <Dialog
+          title={resolveTitle()}
+          body={resolveBody()}
+          buttons={resolveButtons()}
+          closeDialogInState={closePopup}
+        />
+      )}
+    </>
   )
 }
 
 UserProfilePopup.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
   userProfilePopup: PropTypes.object.isRequired,
-  closePopupInState: PropTypes.func.isRequired
+  closePopup: PropTypes.func.isRequired
 }
 
-export default UserProfilePopup
+const mapStateToProps = (state) => {
+  return {
+    userProfilePopup: state.chat.userProfilePopup
+  }
+}
+
+const mapActionsToProps = (dispatch) => {
+  return {
+    closePopup: () => dispatch(closeUserProfilePopupAction())
+  }
+}
+
+export default connect(mapStateToProps, mapActionsToProps)(UserProfilePopup)

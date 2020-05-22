@@ -1,5 +1,4 @@
-import React, { useState } from 'react'
-import Button from '@material-ui/core/Button'
+import React from 'react'
 import MUIDialog from '@material-ui/core/Dialog'
 import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
@@ -9,20 +8,19 @@ import { useTheme } from '@material-ui/core/styles'
 import PropTypes from 'prop-types'
 import Typography from '@material-ui/core/Typography'
 
-const Dialog = ({ isOpen, title, body, closeDialogInState }) => {
+// that's just Dialog's skeleton
+const Dialog = ({ title, body, buttons, closeDialogInState }) => {
   const theme = useTheme()
   // for devices with screen size less than 'sm' show fullscreen dialog
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'))
-  const [open, setOpen] = useState(isOpen)
 
   const handleClose = () => {
     closeDialogInState()
-    setOpen(false)
   }
 
   return (
     <MUIDialog
-      open={open}
+      open
       fullScreen={fullScreen}
       onClose={handleClose}
       aria-labelledby="responsive-dialog-title"
@@ -33,24 +31,15 @@ const Dialog = ({ isOpen, title, body, closeDialogInState }) => {
         </Typography>
       </DialogTitle>
       <DialogContent>{body}</DialogContent>
-      <DialogActions>
-        <Button
-          variant="contained"
-          autoFocus
-          onClick={handleClose}
-          color="secondary"
-        >
-          Close
-        </Button>
-      </DialogActions>
+      <DialogActions>{buttons}</DialogActions>
     </MUIDialog>
   )
 }
 
 Dialog.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
   title: PropTypes.node.isRequired,
   body: PropTypes.node.isRequired,
+  buttons: PropTypes.node.isRequired,
   closeDialogInState: PropTypes.func.isRequired
 }
 

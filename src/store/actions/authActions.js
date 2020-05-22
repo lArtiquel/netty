@@ -2,6 +2,10 @@
 import 'firebase/auth'
 import { AuthConstants } from '../../constants/actionConstants'
 
+export const openSignInFormAction = () => {
+  return (dispatch) => dispatch({ type: AuthConstants.OPEN_SIGNIN_FORM })
+}
+
 export const signInAction = (credentials) => {
   return (dispatch, getState, { getFirebase }) => {
     const firebase = getFirebase()
@@ -18,6 +22,10 @@ export const signInAction = (credentials) => {
   }
 }
 
+export const closeSignInFormAction = () => {
+  return (dispatch) => dispatch({ type: AuthConstants.CLOSE_SIGNIN_FORM })
+}
+
 export const signOutAction = () => {
   return (dispatch, getState, { getFirebase }) => {
     const firebase = getFirebase()
@@ -28,6 +36,10 @@ export const signOutAction = () => {
         dispatch({ type: AuthConstants.SIGNOUT_SUCCESS })
       })
   }
+}
+
+export const openSignUpFormAction = () => {
+  return (dispatch) => dispatch({ type: AuthConstants.OPEN_SIGNUP_FORM })
 }
 
 export const signUpAction = (newUser) => {
@@ -67,6 +79,6 @@ export const signUpAction = (newUser) => {
   }
 }
 
-export const clearAuthErrorAction = () => {
-  return (dispatch) => dispatch({ type: AuthConstants.CLEAR_ERROR })
+export const closeSignUpFormAction = () => {
+  return (dispatch) => dispatch({ type: AuthConstants.CLOSE_SIGNUP_FORM })
 }

@@ -1,109 +1,125 @@
 import React, { useState } from 'react'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
-import Dialog from '@material-ui/core/Dialog'
-import DialogActions from '@material-ui/core/DialogActions'
-import DialogContent from '@material-ui/core/DialogContent'
-import DialogTitle from '@material-ui/core/DialogTitle'
 import Alert from '@material-ui/lab/Alert'
 import { connect } from 'react-redux'
 import PropTypes from 'prop-types'
 import {
+  openSignInFormAction,
   signInAction,
-  clearAuthErrorAction
+  closeSignInFormAction
 } from '../store/actions/authActions'
 import CoolButton from './CoolButton'
+import Dialog from './Dialog'
 
-function SignIn({ signIn, authError, clearError }) {
-  const [open, setOpen] = useState(false)
+function SignIn({
+  isSignInOpened,
+  openSignInForm,
+  closeSignInForm,
+  signIn,
+  authError
+}) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
-  const resetForm = () => {
+  const closeAndCleanUp = () => {
+    // close dialog
+    closeSignInForm()
+    // clean form fields
     setEmail('')
     setPassword('')
-    clearError()
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
+  const handleSubmit = () => {
+    // on success it'll automatically close dialog and clear error state
     signIn({ email, password })
-    resetForm()
   }
 
   const closeDialog = () => {
-    setOpen(false)
-    resetForm()
+    closeAndCleanUp()
+  }
+
+  const resolveBody = () => {
+    return (
+      <>
+        <TextField
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+          autoFocus
+          margin="dense"
+          id="email"
+          label="Email"
+          type="email"
+          fullWidth
+          required
+        />
+        <TextField
+          value={password}
+          onChange={(event) => setPassword(event.target.value)}
+          margin="dense"
+          id="password"
+          label="Password"
+          type="password"
+          fullWidth
+          inputProps={{ minLength: 6 }}
+          required
+        />
+        {authError ? <Alert severity="error">{authError}</Alert> : null}
+      </>
+    )
+  }
+
+  const resolveButtons = () => {
+    return (
+      <>
+        <Button variant="contained" onClick={closeDialog} color="secondary">
+          Cancel
+        </Button>
+        <Button variant="contained" onClick={handleSubmit} color="primary">
+          Sign In
+        </Button>
+      </>
+    )
   }
 
   return (
-    <div>
-      <CoolButton color="red" variant="contained" onClick={() => setOpen(true)}>
+    <>
+      <CoolButton color="red" onClick={openSignInForm}>
         Sign In
       </CoolButton>
-      <Dialog
-        open={open}
-        onClose={closeDialog}
-        aria-labelledby="form-dialog-title"
-      >
-        <form onSubmit={handleSubmit}>
-          <DialogTitle id="form-dialog-title">Please, Sign In</DialogTitle>
-          <DialogContent>
-            <TextField
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              autoFocus
-              margin="dense"
-              id="email"
-              label="Email"
-              type="email"
-              fullWidth
-              required
-            />
-            <TextField
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              margin="dense"
-              id="password"
-              label="Password"
-              type="password"
-              fullWidth
-              inputProps={{ minLength: 6 }}
-              required
-            />
-            {authError ? <Alert severity="error">{authError}</Alert> : null}
-          </DialogContent>
-          <DialogActions>
-            <Button variant="contained" onClick={closeDialog} color="secondary">
-              Cancel
-            </Button>
-            <Button type="submit" variant="contained" color="primary">
-              Sign In
-            </Button>
-          </DialogActions>
-        </form>
-      </Dialog>
-    </div>
+
+      {isSignInOpened && (
+        <Dialog
+          title="Please, Sign In"
+          body={resolveBody()}
+          buttons={resolveButtons()}
+          closeDialogInState={closeSignInForm}
+        />
+      )}
+    </>
   )
 }
 
 SignIn.propTypes = {
+  isSignInOpened: PropTypes.bool.isRequired,
+  openSignInForm: PropTypes.func.isRequired,
+  closeSignInForm: PropTypes.func.isRequired,
   signIn: PropTypes.func.isRequired,
-  authError: PropTypes.string.isRequired,
-  clearError: PropTypes.func.isRequired
+  authError: PropTypes.string.isRequired
 }
 
 const mapStateToProps = (state) => {
   return {
+    isSignInOpened: state.auth.isSignInOpened,
     authError: state.auth.authError
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    // this prop dispatches an action in store
+    openSignInForm: () => dispatch(openSignInFormAction()),
     signIn: (creds) => dispatch(signInAction(creds)),
-    clearError: () => dispatch(clearAuthErrorAction())
+    closeSignInForm: () => dispatch(closeSignInFormAction())
   }
 }
 
