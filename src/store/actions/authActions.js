@@ -29,6 +29,7 @@ export const closeSignInFormAction = () => {
 export const signOutAction = () => {
   return (dispatch, getState, { getFirebase }) => {
     const firebase = getFirebase()
+
     firebase
       .auth()
       .signOut()

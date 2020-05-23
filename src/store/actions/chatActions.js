@@ -35,6 +35,7 @@ export const sendMessageAction = (newMessage) => {
 export const subscribeToLastMessagesAction = () => {
   return (dispatch, getState, { getFirestore }) => {
     const firestore = getFirestore()
+    let isFirstBatchLoading = true
 
     const subscriptionHandle = firestore
       .collection('chats')
@@ -67,6 +68,17 @@ export const subscribeToLastMessagesAction = () => {
           } catch (error) {
             console.log(error)
           }
+          // it fixes issue when user switches to another page until when some userInfo still loading
+          // in than case after going back to chat page in message state array would be some message(s)
+          if (isFirstBatchLoading) {
+            const msgArrLength = getState().chat.messages.length
+            if (msgArrLength) {
+              dispatch({
+                type: ChatConstants.CANCEL_SUBSCRIPTION
+              })
+            }
+            isFirstBatchLoading = false
+          }
           // dispatch collected messages to state
           dispatch({
             type: ChatConstants.SUBSCRIBED_MESSAGES_ADDED,
@@ -78,7 +90,7 @@ export const subscribeToLastMessagesAction = () => {
     // store subscription handle in state
     dispatch({
       type: ChatConstants.STORE_SUBSCRIPTION_HANDLE,
-      payload: subscriptionHandle
+      handle: subscriptionHandle
     })
   }
 }

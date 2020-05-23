@@ -21,7 +21,7 @@ const initState = {
     }
   },
   messages: [],
-  subscriptionHandler: () => {}, // every time component mounts - it should store subscription handle
+  subscriptionHandle() {}, // every time component mounts - it should store subscription handle
   isFirstMsgsLoading: true, // subscribe to last messages, store them in the state and determine hasMoreMsgs flag value
   hasMoreMsgs: false, // so hasMoreMsgs value is undefined for now
   isBatchMsgsLoading: false // after subscription msgs loaded we can use that flag to determine when new batch loading and show it in UI
@@ -116,16 +116,16 @@ const chatReducer = (state = initState, action) => {
           isOpen: true,
           title: 'Connection error',
           message:
-            'You can not reach the top without connection. Check internet connection and come back latter.'
+            'You can not reach the top without connection. Check internet connection and come back later.'
         }
       }
     }
 
     case ChatConstants.STORE_SUBSCRIPTION_HANDLE: {
-      if (action.payload) {
+      if (action.handle) {
         return {
           ...state,
-          subscriptionHandle: action.payload
+          subscriptionHandle: action.handle
         }
       }
       return {
