@@ -13,6 +13,7 @@
     "dayjs": "^1.8.26",
     "firebase": "^7.14.1",
     "firebase-admin": "^8.11.0",
+    "formik": "^2.1.4",
     "history": "^4.10.1",
     "install-peerdeps": "^2.0.2",
     "prop-types": "^15.7.2",
@@ -25,7 +26,8 @@
     "react-scripts": "3.4.1",
     "redux-auth-wrapper": "^3.0.0",
     "redux-firestore": "^0.13.0",
-    "redux-thunk": "^2.3.0"
+    "redux-thunk": "^2.3.0",
+    "yup": "^0.29.0"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -22,11 +22,8 @@ const MessageInput = ({ sendAction }) => {
   }
 
   const handleSend = () => {
-    const msg = message.body.trim()
-    if (msg) {
-      sendAction(message)
-      setMessage(INITIAL_STATE)
-    }
+    sendAction(message)
+    setMessage(INITIAL_STATE)
   }
 
   return (
@@ -54,7 +51,11 @@ const MessageInput = ({ sendAction }) => {
         />
       </Box>
       <Box position="right">
-        <Button onClick={handleSend} variant="outlined">
+        <Button
+          disabled={!message.body.trim().length}
+          onClick={handleSend}
+          variant="outlined"
+        >
           <SendOutlined />
         </Button>
       </Box>

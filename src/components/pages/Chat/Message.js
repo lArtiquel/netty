@@ -58,8 +58,8 @@ const Message = ({ message, openUserProfilePopup }) => {
                 display="flex"
                 flexDirection="row-reverse"
                 flexGrow={1}
-                alignItems="center"
                 color="grey.600"
+                ml={1}
               >
                 <Typography align="center" variant="caption" gutterBottom>
                   {timestamp}
