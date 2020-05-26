@@ -1,19 +1,39 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using the [Redux](https://redux.js.org/) and [Redux Toolkit](https://redux-toolkit.js.org/) template.
+Check Netty deploy [here](https://netty-chat.web.app/).
 
-## npm packages
-```
-    npm install react
-    npm install redux
-    npm install redux-thunk
-    npm install firebase
-    npm install react-redux-firebase
-    npm install react-firestore
-```
+## Netty screenshots
 
+### Home page
 
-## Available Scripts
+![](res/screenshots/home.png)
 
-In the project directory, you can run:
+### Messages
+
+#### Mobile
+![](res/screenshots/mobile_messages.png)
+
+#### Desktop
+![](res/screenshots/desktop_messages.png)
+
+### Profile
+
+#### Mobile
+![](res/screenshots/mobile_profile.png)
+
+#### Desktop
+![](res/screenshots/desktop_profile.png)
+
+### Database
+![](res/screenshots/firebase.png)
+
+## Tips for potential contributors
+
+Make fork, clone repo to your computer, open in favorite code editor and you are ready for the development! Sounds easy, huh?
+I left all necessary firebase configurations open for public, so you are welcome to use them.
+Here some scripts for you:
+
+### `npm install`
+
+Installs all necessary packages to boot up the app.
 
 ### `npm start`
 
@@ -22,11 +42,6 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 The page will reload if you make edits.<br />
 You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
 ### `npm run build`
 
@@ -38,42 +53,18 @@ Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
 ## Learn More
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+To learn React, check out the [React documentation](https://reactjs.org/)
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+To learn Redux, check out the [Redux documentation](https://redux.js.org/)
 
-### Code Splitting
+To learn Firebase, check out the [Firebase documentation](https://firebase.google.com/docs)
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+Learn more about Material-UI at [Material-UI documentation](https://material-ui.com/)
 
-### Analyzing the Bundle Size
+Special thank you to [Net Ninja](https://www.youtube.com/channel/UCW5YeuERMmlnqo4oq8vwUpg) and [Classsed](https://www.youtube.com/channel/UC2-slOJImuSc20Drbf88qvg) for their tutorials. Check out their channels.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+## Thank you, reader!
 
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+Do not hesitate to leave a star, fork and pull request.
