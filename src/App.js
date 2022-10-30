@@ -25,7 +25,7 @@ function App() {
           </PageTemplate>
         </Route>
         <Route exact path="/messages">
-          <PageTemplate page="Profile">
+          <PageTemplate page="Messages">
             <Chat />
           </PageTemplate>
         </Route>
