@@ -38,6 +38,7 @@ const MessageStack = ({
   useEffect(() => {
     subscribeToLastMessages()
     return () => cancelSubscription()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const endMessage = (
@@ -59,7 +60,6 @@ const MessageStack = ({
           isLoading={isBatchMsgsLoading}
           loader={<CircularProgress />}
           endMessage={endMessage}
-          isReverse
           threshold={0.85}
           materialStyle={styles.messageStackWrapper}
         >

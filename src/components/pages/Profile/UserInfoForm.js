@@ -63,6 +63,7 @@ const UserInfoForm = ({
         ...profileInfo[auth.uid]
       })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profileInfo])
 
   const applyChanges = (e) => {

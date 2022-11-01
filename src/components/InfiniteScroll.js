@@ -7,59 +7,63 @@ const InfiniteScroll = ({
   isLoading,
   loader,
   endMessage,
-  isReverse,
   threshold,
   materialStyle,
   children
 }) => {
-  const scrollDiv = useRef(null)
+  const scrollDiv = useRef()
 
   useEffect(() => {
     // this effect needed just to throw error if developer passed wrong threshold value
     const thresholdValue = parseFloat(threshold)
     if (isNaN(thresholdValue) || thresholdValue < 0.4 || thresholdValue > 1)
-      throw 'Threshold parameter is not in the range(0.4-1)!'
-  }, [])
+      throw new Error('Threshold parameter is not in the range(0.4-1)!')
+  }, [threshold])
 
-  const handleScroll = () => {
-    if (!hasMore) return
-    // offsetHeight - visible height in px of container with it's padding
-    // scrollTop - scrolled height in px
-    // scrollHeight - visible and non-visible height of container with it's padding
-    // so, offsetHeight + scrollTop = scrollHeight
-    // threshold - value between 0.4 - 1 when we need to trigger loadMore()
-    if (!isReverse) {
-      if (
-        scrollDiv.current.offsetHeight + scrollDiv.current.scrollTop <
-        scrollDiv.current.scrollHeight * threshold
-      )
-        return
-    } else if (
-      // chrome flexbox with column-reverse direction still counting it's scrollTop from it's container's top
-      scrollDiv.current.scrollHeight * (1 - threshold) <
-      scrollDiv.current.scrollTop
-    )
-      return
-    // detach handleScroll func from scroll event here, before loadMore()
-    // even knowing that loadMore() mutating `isLoading`, we still can't be sure that
-    // it will remove that event listener in useEffect before next event invoke handleScroll
-    // i reproduced that bug once doing very fast scrolling
-    scrollDiv.current.removeEventListener('scroll', handleScroll)
-    loadMore()
-  }
-
+  /**
+   *
+   * Short info regarding scroll vars used here:
+   * - offsetHeight - visible height in px of container with it's padding
+   * - scrollTop - scrolled height in px (basis in the top of container)
+   * - scrollHeight - visible and non-visible height of container with it's padding
+   * - so, offsetHeight + scrollTop = scrollHeight
+   * - threshold - value between 0.4 - 1 when we need to trigger loadMore()
+   */
   useEffect(() => {
-    // if new batch isn't loading -> set event listener again
-    if (!isLoading) {
-      scrollDiv.current.addEventListener('scroll', handleScroll)
-      // and trigger func in case if scroll stuck at the top when we detached handleScroll func and now it not moving
-      handleScroll()
-    }
-    // removes event listener after all `isLoading` flag changes and when component unmounts
-    return () => {
+    const handleScroll = () => {
+      if (!hasMore) return
+
+      const scrollTop = Math.abs(scrollDiv.current.scrollTop)
+      if (
+        scrollDiv.current.offsetHeight + scrollTop <
+        scrollDiv.current.scrollHeight * threshold
+      ) {
+        return
+      }
+
+      // detach handleScroll func from scroll event here, before loadMore()
+      // even knowing that loadMore() mutating `isLoading`, we still can't be sure that
+      // it will remove that event listener in useEffect before next event invoke handleScroll
+      // i reproduced that bug once doing very fast scrolling
       scrollDiv.current.removeEventListener('scroll', handleScroll)
+      loadMore()
     }
-  }, [isLoading])
+
+    const scroll = scrollDiv.current
+    if (typeof scroll !== 'undefined') {
+      // if new batch isn't loading -> set event listener again
+      if (!isLoading) {
+        scroll.addEventListener('scroll', handleScroll)
+        // and trigger func in case if scroll stuck at the top when we detached handleScroll func and now it not moving
+        handleScroll()
+      }
+      // remove event listener after all `isLoading` flag changes and when component unmounts
+      return () => {
+        scroll.removeEventListener('scroll', handleScroll)
+      }
+    }
+    throw new Error('No scroll div assigned!')
+  }, [isLoading, hasMore, loadMore, threshold])
 
   return (
     <div className={materialStyle} ref={scrollDiv}>
@@ -76,7 +80,6 @@ InfiniteScroll.propTypes = {
   isLoading: PropTypes.bool.isRequired,
   loader: PropTypes.node.isRequired,
   endMessage: PropTypes.node.isRequired,
-  isReverse: PropTypes.bool.isRequired,
   threshold: PropTypes.number.isRequired,
   materialStyle: PropTypes.string,
   children: PropTypes.node
