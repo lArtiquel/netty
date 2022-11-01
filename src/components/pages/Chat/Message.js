@@ -16,6 +16,9 @@ const useStyles = makeStyles((theme) => ({
   avatar: {
     width: theme.spacing(6),
     height: theme.spacing(6)
+  },
+  wordWrapper: {
+    overflowWrap: 'anywhere' // wrap long words without spaces
   }
 }))
 
@@ -66,7 +69,12 @@ const Message = ({ message, openUserProfilePopup }) => {
                 </Typography>
               </Box>
             </Box>
-            <Box display="flex" flexDirection="row" color="grey.300">
+            <Box
+              display="flex"
+              flexDirection="row"
+              color="grey.300"
+              className={styles.wordWrapper}
+            >
               {message.body}
             </Box>
           </Box>
