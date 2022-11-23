@@ -1,9 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import UserInfo from '../../types/UserInfo'
 import { RootState } from '../store'
-import { ChatConfig } from '../../config/AppConfig'
-import UIMessage from '../../types/UIMessage'
-import { openUserProfilePopup, sendMessage, subscribeToLastMessages } from '../async-actions/ChatActions'
+import { openUserProfilePopup, sendMessage } from '../async-actions/ChatActions'
 import { Modal } from '../../types/Modal'
 
 /**
@@ -19,11 +17,6 @@ export interface IUserProfilePopupProps {
 export interface IChatComponentState {
   modal: Modal,
   userProfilePopup: IUserProfilePopupProps,
-  messages: UIMessage[],
-  subscriptionHandle: () => void, // every time component mounts - it should store subscription handle
-  isFirstMsgsLoading: boolean, // subscribe to last messages, store them in the state and determine hasMoreMsgs flag value
-  hasMoreMsgs: boolean, // so hasMoreMsgs value is undefined for now
-  isBatchMsgsLoading: boolean // after subscription msgs loaded we can use that flag to determine when new batch loading and show it in UI
 }
 
 const initialState : IChatComponentState = {
@@ -45,12 +38,7 @@ const initialState : IChatComponentState = {
       location: '',
       bio: ''
     }
-  },
-  messages: [],
-  subscriptionHandle: () => {},
-  isFirstMsgsLoading: true,
-  hasMoreMsgs: false,
-  isBatchMsgsLoading: false
+  }
 }
 
 export const chatSlice = createSlice({
@@ -68,48 +56,6 @@ export const chatSlice = createSlice({
       state.userProfilePopup.isError = false
       state.userProfilePopup.isLoading = false
     },
-    subscribedMessagesAdded: (state, action: PayloadAction<UIMessage[]>) => {
-      // First batch of subscribed messages contains all `MESSAGES_SUBSCRIPTION_THRESHOLD` msgs
-      // so, if action.messages.length < MESSAGES_SUBSCRIPTION_THRESHOLD then it's all of them
-      if (state.isFirstMsgsLoading) {
-        state.isFirstMsgsLoading = false
-        state.hasMoreMsgs = action.payload.length >= ChatConfig.MESSAGES_SUBSCRIPTION_THRESHOLD;
-      }
-      state.messages = action.payload.concat(state.messages)
-    },
-    triggerBatchLoadingFlag: state => {
-      state.isBatchMsgsLoading = true
-    },
-    loadedMoreMessages: (state, action: PayloadAction<UIMessage[]>) => {
-      // if new messages batch size less than `LOAD_MORE_MESSAGES_BATCH_SIZE` => all loaded
-      if (action.payload.length < ChatConfig.LOAD_MORE_MESSAGES_BATCH_SIZE) {
-        return {
-          ...state,
-          hasMoreMsgs: false,
-          isBatchMsgsLoading: false,
-          messages: [...state.messages, ...action.payload]
-        }
-      } else {
-        return {
-          ...state,
-          isBatchMsgsLoading: false,
-          messages: [...state.messages, ...action.payload]
-        }
-      }
-    },
-    loadMoreFailed: state => {
-      // if failed - stop loading new batches of messages and show modal
-      state.hasMoreMsgs = true
-      state.isBatchMsgsLoading = true
-      state.modal.isOpen = true
-      state.modal.title = 'Connection error'
-      state.modal.message = 'You can not reach the top without connection. Check internet connection and come back later.'
-    },
-    cancelSubscription: (state) => {
-      const { subscriptionHandle } = state
-      subscriptionHandle() // unsubscribe
-      return initialState
-    },
     closeUserProfileModalDialog: state => {
       state.userProfilePopup = initialState.userProfilePopup
     }
@@ -119,9 +65,6 @@ export const chatSlice = createSlice({
       modal.isOpen = true
       modal.title = 'Sorry, an error occurred'
       modal.message = action.error.message || ''
-    })
-    builder.addCase(subscribeToLastMessages.fulfilled, (state, action: PayloadAction<() => void>) => {
-      state.subscriptionHandle = action.payload
     })
     builder.addCase(openUserProfilePopup.pending, (state , action) => {
       state.userProfilePopup.isOpen = true
