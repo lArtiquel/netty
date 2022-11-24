@@ -1,6 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '../store'
-import { sendMessage } from '../async-actions/ChatActions'
 import { Modal } from '../../types/Modal'
 
 export interface IChatComponentState {
@@ -20,18 +19,16 @@ export const chatSlice = createSlice({
   // `createSlice` will infer the state type from the `initialState` argument
   initialState,
   reducers: {
+    openModalWithError: (state, action: PayloadAction<Error | unknown>) => {
+      state.modal.isOpen = true
+      state.modal.title = 'Sorry, an error occurred'
+      state.modal.message = (action.payload instanceof Error) ? action.payload.message : ''
+    },
     closeModal: state => {
       state.modal.isOpen = false
       state.modal.title = ''
       state.modal.message = ''
     }
-  },
-  extraReducers: builder => {
-    builder.addCase(sendMessage.rejected, ({ modal }, action) => {
-      modal.isOpen = true
-      modal.title = 'Sorry, an error occurred'
-      modal.message = action.error.message || ''
-    })
   }
 })
 
