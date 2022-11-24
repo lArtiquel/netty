@@ -11,12 +11,9 @@ import Divider from '@material-ui/core/Divider'
 import Avatar from '@material-ui/core/Avatar'
 import CircularProgress from '../../CircularProgress'
 import Dialog from '../../Dialog'
-import { useAppDispatch, useAppSelector } from '../../../store/hooks/hooks'
-import { ChatActions } from '../../../store/slice/ChatSlice'
-import { getFirebase, useFirestore } from 'react-redux-firebase'
+import { useFirestore } from 'react-redux-firebase'
 import UserInfo, { USERINFO_COLLECTION_NAME } from '../../../types/UserInfo'
 import { DocumentSnapshot } from '@firebase/firestore-types'
-import { Modal } from '../../../types/Modal'
 
 const useStyles = makeStyles(() => ({
   profileImageWrapper: {
@@ -95,6 +92,7 @@ export default function UserProfilePopup(props: UserProfilePopupProps) {
         })
       }
     })()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const resolveTitle = () => {

@@ -1,6 +1,5 @@
 import React, { ReactNode } from 'react'
 import { Redirect, Route, RouteProps } from 'react-router-dom'
-import { useFirebase, useFirestore } from 'react-redux-firebase'
 import { useAppSelector } from '../store/hooks/hooks'
 import { HOME_PAGE_PATH } from '../config/AppConfig'
 
@@ -13,8 +12,6 @@ type Props = {
 // yet loaded
 export const PrivateRoute = ({ children, ...rest }: Props) => {
   const authState = useAppSelector(state => state.firebase.auth)
-  const auth = useFirebase().auth()
-  const firestore = useFirestore()
 
   // todo chek if we need to sync some props to firestore
   // auth.onAuthStateChanged(async (authUser) => {

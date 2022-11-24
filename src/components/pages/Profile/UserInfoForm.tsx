@@ -11,7 +11,6 @@ import Tooltip from '@material-ui/core/Tooltip'
 import { updateProfileImage, updateUserInfo } from '../../../store/async-actions/ProfileActions'
 import { useAppDispatch, useAppSelector } from '../../../store/hooks/hooks'
 import { DEFAULT_USER_PROFILE_PICTURE } from '../../../config/AppConfig'
-import UserInfo from '../../../types/UserInfo'
 
 const useStyles = makeStyles((theme) => ({
   profileImageWrapper: {

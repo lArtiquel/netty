@@ -5,7 +5,6 @@ import { Divider } from '@material-ui/core'
 import MessageInput from './MessageInput'
 import ChatContainer from './ChatContainer'
 import Modal from '../../Modal'
-import UserProfilePopup from './UserProfilePopup'
 import { useAppDispatch, useAppSelector } from '../../../store/hooks/hooks'
 import { ChatActions, selectChat } from '../../../store/slice/ChatSlice'
 

@@ -125,8 +125,8 @@ export default function MessageStack({ anchor }: MessageStackProps) {
         },
         (error) => console.log(error.message)
       )
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     return () => subscriptionHandle()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const endMessage = (
