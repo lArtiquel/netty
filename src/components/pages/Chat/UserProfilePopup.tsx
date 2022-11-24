@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
 import InputAdornment from '@material-ui/core/InputAdornment'
@@ -13,6 +13,10 @@ import CircularProgress from '../../CircularProgress'
 import Dialog from '../../Dialog'
 import { useAppDispatch, useAppSelector } from '../../../store/hooks/hooks'
 import { ChatActions } from '../../../store/slice/ChatSlice'
+import { getFirebase, useFirestore } from 'react-redux-firebase'
+import UserInfo, { USERINFO_COLLECTION_NAME } from '../../../types/UserInfo'
+import { DocumentSnapshot } from '@firebase/firestore-types'
+import { Modal } from '../../../types/Modal'
 
 const useStyles = makeStyles(() => ({
   profileImageWrapper: {
@@ -22,15 +26,80 @@ const useStyles = makeStyles(() => ({
   }
 }))
 
-export default function UserProfilePopup() {
+export interface IUserProfilePopupState {
+  // isOpen: boolean
+  isLoading: boolean
+  isError: boolean
+  data: UserInfo
+}
+
+export interface UserProfilePopupProps {
+  userId: string
+  closeCallback: () => void
+}
+
+export default function UserProfilePopup(props: UserProfilePopupProps) {
   const styles = useStyles()
 
-  const userProfile = useAppSelector(state => state.chat.userProfilePopup)
-  const dispatch = useAppDispatch()
+  const firestore = useFirestore()
+
+  const [userProfile, setUserProfile] = useState<IUserProfilePopupState>(
+    {
+      // isOpen: false,
+      isLoading: false,
+      isError: false,
+      data: {
+        fname: '',
+        sname: '',
+        photoURL: '',
+        dob: '',
+        location: '',
+        bio: ''
+      }
+    })
+
+  /**
+   * Load user data by id for displaying in profile popup.
+   */
+  useEffect(() => {
+    (async () => {
+      try {
+        setUserProfile({
+          ...userProfile,
+          isLoading: true
+        })
+
+        const userDoc = await firestore
+          .collection(USERINFO_COLLECTION_NAME)
+          .doc(props.userId)
+          .get() as DocumentSnapshot<UserInfo>
+
+        if (userDoc.exists) {
+          setUserProfile({
+            ...userProfile,
+            isLoading: false,
+            data: userDoc.data() as UserInfo
+          })
+        } else {
+          setUserProfile({
+            ...userProfile,
+            isLoading: false,
+            isError: true
+          })
+        }
+      } catch (e) {
+        setUserProfile({
+          ...userProfile,
+          isLoading: false,
+          isError: true
+        })
+      }
+    })()
+  }, [])
 
   const resolveTitle = () => {
     if (userProfile.isError)
-      return 'Ups, an error occured... Please try later.'
+      return 'Ups, an error occurred... Please try again later.'
 
     if (userProfile.isLoading) return 'Loading... Please, wait.'
 
@@ -113,7 +182,7 @@ export default function UserProfilePopup() {
   const resolveButtons = () => {
     return (
       <>
-        <Button variant="contained" onClick={() => dispatch(ChatActions.closeUserProfile())} color="secondary">
+        <Button variant="contained" onClick={props.closeCallback} color="secondary">
           Close
         </Button>
       </>
@@ -121,15 +190,11 @@ export default function UserProfilePopup() {
   }
 
   return (
-    <>
-      {userProfile.isOpen && (
-        <Dialog
-          title={resolveTitle()}
-          body={resolveBody()}
-          buttons={resolveButtons()}
-          closeDialog={() => dispatch(ChatActions.closeUserProfile())}
-        />
-      )}
-    </>
+      <Dialog
+        title={resolveTitle()}
+        body={resolveBody()}
+        buttons={resolveButtons()}
+        closeDialog={props.closeCallback}
+      />
   )
 }

@@ -59,7 +59,6 @@ const Chat = () => {
         />
       )}
 
-      <UserProfilePopup />
     </div>
   )
 }
