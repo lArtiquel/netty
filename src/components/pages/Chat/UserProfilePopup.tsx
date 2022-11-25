@@ -24,7 +24,6 @@ const useStyles = makeStyles(() => ({
 }))
 
 export interface IUserProfilePopupState {
-  // isOpen: boolean
   isLoading: boolean
   isError: boolean
   data: UserInfo
@@ -42,7 +41,6 @@ export default function UserProfilePopup(props: UserProfilePopupProps) {
 
   const [userProfile, setUserProfile] = useState<IUserProfilePopupState>(
     {
-      // isOpen: false,
       isLoading: false,
       isError: false,
       data: {
@@ -171,7 +169,7 @@ export default function UserProfilePopup(props: UserProfilePopupProps) {
               : 'No biography for now.'
           }
           multiline
-          rows={5}
+          minRows={5}
         />
       </>
     )

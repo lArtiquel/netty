@@ -16,9 +16,11 @@ import ExitToAppRoundedIcon from '@material-ui/icons/ExitToAppRounded'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import MenuIcon from '@material-ui/icons/Menu'
 import { useHistory } from 'react-router-dom'
-import { useAppDispatch } from '../../store/hooks/hooks'
+import { useAppDispatch, useAppSelector } from '../../store/hooks/hooks'
 import { MESSAGES_PATH, PROFILE_PATH } from '../../config/AppConfig'
 import { signOut } from '../../store/async-actions/AuthActions'
+import { ModalActions, selectModal } from '../../store/slice/ModalSlice'
+import Modal from '../Modal'
 
 const drawerWidth = 240
 
@@ -71,13 +73,14 @@ type PageTemplateProps = {
   children: React.ReactNode
 }
 
-
 const PageTemplate = ({ page, children }: PageTemplateProps) => {
   const styles = useStyles()
   const [mobileOpen, setMobileOpen] = React.useState(false)
   const history = useHistory()
 
   const dispatch = useAppDispatch()
+
+  const modal = useAppSelector(selectModal)
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen)
@@ -125,6 +128,13 @@ const PageTemplate = ({ page, children }: PageTemplateProps) => {
 
   return (
     <div className={styles.root}>
+      {modal.isOpen && (
+        <Modal
+          title={modal.title}
+          message={modal.message}
+          closeModal={() => dispatch(ModalActions.closeModal())}
+        />
+      )}
       <AppBar position="fixed" className={styles.appBar}>
         <Toolbar>
           <IconButton
@@ -169,7 +179,9 @@ const PageTemplate = ({ page, children }: PageTemplateProps) => {
           </Drawer>
         </Hidden>
       </nav>
-      <main className={styles.content}>{children}</main>
+      <main className={styles.content}>
+        { children }
+      </main>
     </div>
   )
 }

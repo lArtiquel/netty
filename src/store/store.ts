@@ -3,9 +3,8 @@ import { firebaseReducer, FirebaseReducer, getFirebase } from 'react-redux-fireb
 import { createFirestoreInstance, firestoreReducer, getFirestore } from 'redux-firestore'
 import firebase from '../config/FirebaseConfig'
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit'
-import chatReducer from './slice/ChatSlice'
-import profileReducer from './slice/ProfileSlice'
 import authReducer from './slice/AuthSlice'
+import modalReducer from './slice/ModalSlice'
 import UserInfo, { USERINFO_COLLECTION_NAME } from '../types/UserInfo'
 
 const typedFirebaseReducer: <UserType,
@@ -14,8 +13,7 @@ const typedFirebaseReducer: <UserType,
 
 const rootReducer = combineReducers({
   auth: authReducer,
-  profile: profileReducer,
-  chat: chatReducer,
+  modal: modalReducer,
   firestore: firestoreReducer,
   firebase: typedFirebaseReducer
 })

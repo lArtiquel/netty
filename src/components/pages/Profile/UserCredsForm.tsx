@@ -4,7 +4,8 @@ import Box from '@material-ui/core/Box'
 import Paper from '@material-ui/core/Paper'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
-import { updateUserCredentials } from '../../../store/async-actions/ProfileActions'
+import { useFirebase } from 'react-redux-firebase'
+import { ModalActions } from '../../../store/slice/ModalSlice'
 import { useAppDispatch } from '../../../store/hooks/hooks'
 
 const useStyles = makeStyles((theme) => ({
@@ -26,6 +27,7 @@ export interface UserCredentialsChangeForm {
 export default function UserCredentialsForm() {
   const styles = useStyles()
 
+  const firebase = useFirebase()
   const dispatch = useAppDispatch()
 
   const [userCreds, setUserCreds] = useState({
@@ -41,9 +43,30 @@ export default function UserCredentialsForm() {
     })
   }
 
-  const handleSubmit = (e: { preventDefault: () => void }) => {
+  const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault()
-    dispatch(updateUserCredentials(userCreds))
+
+    try {
+      const user = firebase.auth().currentUser
+      if (user) {
+        if (userCreds.email !== user.email) {
+          throw new Error('Email does not match!')
+        }
+
+        if (userCreds.password !== userCreds.cpassword) {
+          throw new Error('Passwords do not match!')
+        }
+
+        await user.updatePassword(userCreds.password)
+
+        dispatch(ModalActions.openSuccessModal('User credentials were successfully updated!'))
+      } else {
+        throw new Error('User is not signed in!')
+      }
+    } catch (e) {
+      dispatch(ModalActions.openErrorModal(e))
+    }
+
   }
 
   return (

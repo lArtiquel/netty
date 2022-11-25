@@ -8,9 +8,11 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 import IconButton from '@material-ui/core/IconButton'
 import EditIcon from '@material-ui/icons/Edit'
 import Tooltip from '@material-ui/core/Tooltip'
-import { updateProfileImage, updateUserInfo } from '../../../store/async-actions/ProfileActions'
 import { useAppDispatch, useAppSelector } from '../../../store/hooks/hooks'
 import { DEFAULT_USER_PROFILE_PICTURE } from '../../../config/AppConfig'
+import { useFirebase, useFirestore } from 'react-redux-firebase'
+import { USERINFO_COLLECTION_NAME } from '../../../types/UserInfo'
+import { ModalActions } from '../../../store/slice/ModalSlice'
 
 const useStyles = makeStyles((theme) => ({
   profileImageWrapper: {
@@ -36,9 +38,12 @@ const useStyles = makeStyles((theme) => ({
 export default function UserInfoForm() {
   const profileImageInputRef = useRef<HTMLInputElement>(null)
   const profile = useAppSelector((state => state.firebase.profile))
+  const dispatch = useAppDispatch()
   const [userInfo, setUserInfo] = useState(profile)
   const styles = useStyles()
-  const dispatch = useAppDispatch()
+
+  const firebase = useFirebase()
+  const firestore = useFirestore()
 
   // todo: fix uncontrolled input warning
   useEffect(() => {
@@ -49,9 +54,33 @@ export default function UserInfoForm() {
     }
   }, [profile])
 
-  const applyChanges = (e: { preventDefault: () => void }) => {
+  const updateUserInfo = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    dispatch(updateUserInfo(userInfo))
+
+    try {
+      const user = firebase.auth().currentUser
+      if (user) {
+        await user.updateProfile({
+          displayName: `${userInfo.fname} ${userInfo.sname}`
+        })
+        // updating userInfo in firestore
+        await firestore
+          .collection(USERINFO_COLLECTION_NAME)
+          .doc(`${user.uid}`)
+          .update({
+            fname: userInfo.fname,
+            sname: userInfo.sname,
+            dob: userInfo.dob,
+            location: userInfo.location,
+            bio: userInfo.bio
+          })
+        dispatch(ModalActions.openSuccessModal('User info was successfully updated!'))
+      } else {
+        throw new Error('User is not signed in!')
+      }
+    } catch (e) {
+      dispatch(ModalActions.openErrorModal(e))
+    }
   }
 
   const onChange = (e: { target: { name: string; value: string } }) => [
@@ -61,13 +90,42 @@ export default function UserInfoForm() {
     })
   ]
 
-  const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const selectedImage = event.target.files?.item(0)
-    if (selectedImage) {
-      // dispatch an action to upload image on firestore storage
-      dispatch(updateProfileImage(selectedImage))
-    } else {
-      console.log('No file selected!')
+  const handleImageChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    try {
+      const selectedImage = event.target.files?.item(0)
+      if (selectedImage) {
+        const storage = firebase.storage()
+        const extension = selectedImage.name.split('.').pop()
+        const filename = `hero.${extension}`
+
+        const user = firebase.auth().currentUser
+        if (user) {
+          const response = await storage
+            .ref(`profilePics/${user.uid}/${filename}`)
+            .put(selectedImage)
+
+          const photoUrl = await response.ref.getDownloadURL()
+
+          await user.updateProfile({
+            photoURL: photoUrl
+          })
+
+          await firestore
+            .collection(USERINFO_COLLECTION_NAME)
+            .doc(user.uid)
+            .update({
+              photoURL: photoUrl
+            })
+
+          dispatch(ModalActions.openSuccessModal('Profile image was successfully updated!'))
+        } else {
+          throw new Error('User is not signed in!')
+        }
+      } else {
+        throw new Error('No file selected!')
+      }
+    } catch (e) {
+      dispatch(ModalActions.openErrorModal(e))
     }
   }
 
@@ -83,7 +141,7 @@ export default function UserInfoForm() {
         <Paper variant="outlined">
           <Box my={2} mx={3}>
             {profile.isLoaded ? (
-              <form onSubmit={applyChanges}>
+              <form onSubmit={(e) => updateUserInfo(e)}>
                 <div className={styles.profileImageWrapper}>
                   <img src={profile.photoURL ?
                     profile.photoURL :

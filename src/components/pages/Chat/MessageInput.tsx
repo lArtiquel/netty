@@ -3,11 +3,11 @@ import Box from '@material-ui/core/Box'
 import TextField from '@material-ui/core/TextField'
 import SendOutlined from '@material-ui/icons/SendOutlined'
 import Button from '@material-ui/core/Button'
-import { useAppSelector } from '../../../store/hooks/hooks'
+import { useAppDispatch, useAppSelector } from '../../../store/hooks/hooks'
 import { CHAT_COLLECTION_NAME, ChatMessage, NETTY_GLOBAL_CHAT_NAME } from '../../../types/ChatCollection'
 import Firebase from 'firebase'
 import { useFirestore } from 'react-redux-firebase'
-import { ChatActions } from '../../../store/slice/ChatSlice'
+import { ModalActions } from '../../../store/slice/ModalSlice'
 
 const INITIAL_STATE = '';
 
@@ -17,6 +17,7 @@ export default function MessageInput() {
   const firestore = useFirestore()
 
   const userId = useAppSelector(state => state.firebase.auth.uid)
+  const dispatch = useAppDispatch()
 
   const handleInputChange = (e: { target: { value: string } }) => {
     setMessage(e.target.value)
@@ -35,7 +36,7 @@ export default function MessageInput() {
           createdAt: Firebase.firestore.FieldValue.serverTimestamp()
         } as ChatMessage)
     } catch (e) {
-      ChatActions.openModalWithError(e)
+      dispatch(ModalActions.openErrorModal(e))
     } finally {
       setMessage(INITIAL_STATE)
     }

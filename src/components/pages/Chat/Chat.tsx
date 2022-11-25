@@ -4,9 +4,6 @@ import Typography from '@material-ui/core/Typography'
 import { Divider } from '@material-ui/core'
 import MessageInput from './MessageInput'
 import ChatContainer from './ChatContainer'
-import Modal from '../../Modal'
-import { useAppDispatch, useAppSelector } from '../../../store/hooks/hooks'
-import { ChatActions, selectChat } from '../../../store/slice/ChatSlice'
 
 const useStyles = makeStyles<Theme>((theme: Theme) => createStyles({
     box: {
@@ -31,8 +28,6 @@ const useStyles = makeStyles<Theme>((theme: Theme) => createStyles({
 
 const Chat = () => {
   const styles = useStyles()
-  const {modal} = useAppSelector(selectChat)
-  const dispatch = useAppDispatch()
 
   return (
     <div className={styles.box}>
@@ -49,15 +44,6 @@ const Chat = () => {
       <div className="messageInput">
         <MessageInput />
       </div>
-
-      {modal.isOpen && (
-        <Modal
-          title={modal.title}
-          message={modal.message}
-          closeModal={() => dispatch(ChatActions.closeModal())}
-        />
-      )}
-
     </div>
   )
 }
