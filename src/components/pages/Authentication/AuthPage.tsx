@@ -1,10 +1,10 @@
 import React from 'react'
 import Box from '@material-ui/core/Box'
 import Typography from '@material-ui/core/Typography'
-import SignIn from '../SignIn'
-import SignUp from '../SignUp'
+import SignIn from './SignIn'
+import SignUp from './SignUp'
 
-const Home = () => {
+const AuthPage = () => {
   return (
     <Box
       display="flex"
@@ -57,4 +57,4 @@ const Home = () => {
   )
 }
 
-export default Home
+export default AuthPage

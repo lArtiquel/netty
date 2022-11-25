@@ -7,13 +7,13 @@ import Alert from '@material-ui/lab/Alert'
 import { Field, Form, Formik, FormikProps } from 'formik'
 // @ts-ignore
 import * as Yup from 'yup'
-import { signUp } from '../store/async-actions/AuthActions'
-import CoolButton, { Color } from './CoolButton'
-import Dialog from './Dialog'
-import UserInfo from '../types/UserInfo'
-import { UserCredential } from '../types/UserCredential'
-import { useAppDispatch, useAppSelector } from '../store/hooks/hooks'
-import { AuthActions, selectAuth } from '../store/slice/AuthSlice'
+import { signUp } from '../../../store/async-actions/AuthActions'
+import CoolButton, { Color } from '../../CoolButton'
+import Dialog from '../../Dialog'
+import UserInfo from '../../../types/UserInfo'
+import { UserCredential } from '../../../types/UserCredential'
+import { useAppDispatch, useAppSelector } from '../../../store/hooks/hooks'
+import { AuthActions, selectAuth } from '../../../store/slice/AuthSlice'
 
 
 export interface NewUser extends UserInfo, UserCredential {}
