@@ -1,12 +1,12 @@
-Check Netty deploy [here](https://netty-chat.web.app/).
+Check out [Netty live chat](https://netty-chat.web.app/).
 
-## Netty screenshots
+## Some Netty chat page views
 
-### Home page
+### Authentication page view
 
 ![](res/screenshots/home.png)
 
-### Messages
+### Messages page view
 
 #### Mobile
 ![](res/screenshots/mobile_messages.png)
@@ -14,7 +14,7 @@ Check Netty deploy [here](https://netty-chat.web.app/).
 #### Desktop
 ![](res/screenshots/desktop_messages.png)
 
-### Profile
+### Profile page view
 
 #### Mobile
 ![](res/screenshots/mobile_profile.png)
@@ -27,8 +27,8 @@ Check Netty deploy [here](https://netty-chat.web.app/).
 
 ## Tips for potential contributors
 
-Make fork, clone repo to your computer, open in favorite code editor and you are ready for the development! Sounds easy, huh?
-I left all necessary firebase configurations open for public, so you are welcome to use them.
+Make a fork, clone the repo, open in favorite code editor, and you are ready for development! Sounds easy, huh?
+I left out all necessary firebase configurations open for public, so feel free to use them for dev purposes only!
 Here some scripts for you:
 
 ### `npm install`
@@ -67,4 +67,4 @@ Special thank you to [Net Ninja](https://www.youtube.com/channel/UCW5YeuERMmlnqo
 
 ## Thank you, reader!
 
-Do not hesitate to leave a star, fork and pull request.
+Do not hesitate to leave a star, fork and create pull requests!
