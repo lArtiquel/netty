@@ -6,7 +6,6 @@ import UserInfoForm from './UserInfoForm'
 import UserCredentialsForm from './UserCredsForm'
 
 export default function Profile() {
-
   return (
     <Container maxWidth="xs">
       <Box display="flex" flexDirection="column" justifyContent="center" mx={2}>
