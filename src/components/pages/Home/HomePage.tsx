@@ -1,10 +1,14 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Box from '@material-ui/core/Box'
 import Typography from '@material-ui/core/Typography'
-import SignIn from './SignIn'
-import SignUp from './SignUp'
+import SignInDialog from './SignInDialog'
+import SignUpDialog from './SignUpDialog'
+import CoolButton, { Color } from '../../CoolButton'
 
-const AuthPage = () => {
+const HomePage = () => {
+  const [isSignInOpen, setSignInDialogOpen] = useState<boolean>(false)
+  const [isSignUpOpen, setSignUpDialogOpen] = useState<boolean>(false)
+
   return (
     <Box
       display="flex"
@@ -41,7 +45,12 @@ const AuthPage = () => {
       </Box>
 
       <Box py={2}>
-        <SignIn />
+        <CoolButton color={Color.RED} onClick={() => setSignInDialogOpen(true)}>
+          Sign In
+        </CoolButton>
+        {isSignInOpen && (
+          <SignInDialog closeCallback={() => setSignInDialogOpen(false)} />
+        )}
       </Box>
 
       <Box py={2}>
@@ -51,10 +60,18 @@ const AuthPage = () => {
       </Box>
 
       <Box py={2}>
-        <SignUp />
+        <CoolButton
+          color={Color.BLUE}
+          onClick={() => setSignUpDialogOpen(true)}
+        >
+          Sign Up
+        </CoolButton>
+        {isSignUpOpen && (
+          <SignUpDialog closeCallback={() => setSignUpDialogOpen(false)} />
+        )}
       </Box>
     </Box>
   )
 }
 
-export default AuthPage
+export default HomePage

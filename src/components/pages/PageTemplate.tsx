@@ -18,9 +18,9 @@ import MenuIcon from '@material-ui/icons/Menu'
 import { useHistory } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '../../store/hooks/hooks'
 import { MESSAGES_PATH, PROFILE_PATH } from '../../config/AppConfig'
-import { signOut } from '../../store/async-actions/AuthActions'
 import { ModalActions, selectModal } from '../../store/slice/ModalSlice'
 import Modal from '../Modal'
+import { useFirebase } from 'react-redux-firebase'
 
 const drawerWidth = 240
 
@@ -69,7 +69,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 type PageTemplateProps = {
-  page: string,
+  page: string
   children: React.ReactNode
 }
 
@@ -77,6 +77,7 @@ const PageTemplate = ({ page, children }: PageTemplateProps) => {
   const styles = useStyles()
   const [mobileOpen, setMobileOpen] = React.useState(false)
   const history = useHistory()
+  const firebase = useFirebase()
 
   const dispatch = useAppDispatch()
 
@@ -107,7 +108,11 @@ const PageTemplate = ({ page, children }: PageTemplateProps) => {
           </ListItemIcon>
           <ListItemText primary="Profile" />
         </ListItem>
-        <ListItem button key="Messages" onClick={() => navigateTo(MESSAGES_PATH)}>
+        <ListItem
+          button
+          key="Messages"
+          onClick={() => navigateTo(MESSAGES_PATH)}
+        >
           <ListItemIcon>
             <ForumRoundedIcon />
           </ListItemIcon>
@@ -116,7 +121,11 @@ const PageTemplate = ({ page, children }: PageTemplateProps) => {
       </List>
       <Divider />
       <List>
-        <ListItem button key="Sign out" onClick={() => dispatch(signOut())}>
+        <ListItem
+          button
+          key="Sign out"
+          onClick={() => firebase.auth().signOut()}
+        >
           <ListItemIcon>
             <ExitToAppRoundedIcon />
           </ListItemIcon>
@@ -179,9 +188,7 @@ const PageTemplate = ({ page, children }: PageTemplateProps) => {
           </Drawer>
         </Hidden>
       </nav>
-      <main className={styles.content}>
-        { children }
-      </main>
+      <main className={styles.content}>{children}</main>
     </div>
   )
 }

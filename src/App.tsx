@@ -4,7 +4,7 @@ import CssBaseline from '@material-ui/core/CssBaseline'
 import { ThemeProvider } from '@material-ui/core/styles'
 import { muiTheme } from './muiTheme'
 import PageTemplate from './components/pages/PageTemplate'
-import AuthPage from './components/pages/Authentication/AuthPage'
+import HomePage from './components/pages/Home/HomePage'
 import Profile from './components/pages/Profile/Profile'
 import Chat from './components/pages/Chat/Chat'
 import { HOME_PAGE_PATH, MESSAGES_PATH, PROFILE_PATH } from './config/AppConfig'
@@ -17,10 +17,10 @@ function App() {
       <CssBaseline />
       <Switch>
         <NotSignedOnlyRoute exact path="/">
-          <AuthPage />
+          <HomePage />
         </NotSignedOnlyRoute>
         <NotSignedOnlyRoute exact path={HOME_PAGE_PATH}>
-          <AuthPage />
+          <HomePage />
         </NotSignedOnlyRoute>
         <PrivateRoute exact path={PROFILE_PATH}>
           <PageTemplate page="Profile">

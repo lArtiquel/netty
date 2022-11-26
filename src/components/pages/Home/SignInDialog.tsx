@@ -1,21 +1,22 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
 import Alert from '@material-ui/lab/Alert'
-import { Field, Form, Formik, FormikProps } from 'formik'
+import { Field, Form, Formik, FormikHelpers, FormikProps } from 'formik'
 // @ts-ignore
 import * as Yup from 'yup'
-import { signIn } from '../../../store/async-actions/AuthActions'
-import CoolButton, { Color } from '../../CoolButton'
 import Dialog from '../../Dialog'
 import { UserCredential } from '../../../types/UserCredential'
-import { useAppDispatch, useAppSelector } from '../../../store/hooks/hooks'
-import { AuthActions, selectAuth } from '../../../store/slice/AuthSlice'
+import { useFirebase } from 'react-redux-firebase'
 
-export default function SignIn() {
+interface SignInDialogProps {
+  closeCallback: () => void
+}
+
+export default function SignInDialog({ closeCallback }: SignInDialogProps) {
   const formRef = useRef<FormikProps<UserCredential>>(null)
-  const {authError, isSignInOpened} = useAppSelector(selectAuth)
-  const dispatch = useAppDispatch()
+  const [authError, setAuthError] = useState<string>('')
+  const firebase = useFirebase()
 
   const handleSubmit = () => {
     if (formRef.current) {
@@ -25,10 +26,26 @@ export default function SignIn() {
 
   const closeDialog = () => {
     // close dialog
-    dispatch(AuthActions.closeSignInForm())
+    closeCallback()
     // clean form fields
     if (formRef.current) {
       formRef.current.resetForm()
+    }
+  }
+
+  const signInAction = async (
+    credentials: UserCredential,
+    actions: FormikHelpers<UserCredential>
+  ) => {
+    try {
+      await firebase
+        .auth()
+        .signInWithEmailAndPassword(credentials.email, credentials.password)
+      // reset form fields to initial state
+      actions.resetForm()
+      closeCallback()
+    } catch (e) {
+      setAuthError(e instanceof Error ? e.message : 'Failed to sign in!')
     }
   }
 
@@ -37,15 +54,8 @@ export default function SignIn() {
       <Formik
         /* @ts-ignore */
         innerRef={formRef}
-        initialValues={
-          { email: '', password: '' } as UserCredential
-        }
-        onSubmit={(values, actions) => {
-          // on success it'll automatically close dialog and clear error state, else it'll keep dialog opened with error
-          dispatch(signIn(values))
-          // reset form fields to initial state
-          actions.resetForm()
-        }}
+        initialValues={{ email: '', password: '' } as UserCredential}
+        onSubmit={signInAction}
         validationSchema={Yup.object().shape({
           email: Yup.string()
             .email('Invalid email!')
@@ -105,19 +115,11 @@ export default function SignIn() {
   }
 
   return (
-    <>
-      <CoolButton color={Color.RED} onClick={() => dispatch(AuthActions.openSignInForm())}>
-        Sign In
-      </CoolButton>
-
-      {isSignInOpened && (
-        <Dialog
-          title="Please, Sign In"
-          body={resolveBody()}
-          buttons={resolveButtons()}
-          closeDialog={() => dispatch(AuthActions.closeSignInForm())}
-        />
-      )}
-    </>
+    <Dialog
+      title="Please, Sign In"
+      body={resolveBody()}
+      buttons={resolveButtons()}
+      closeDialog={closeDialog}
+    />
   )
 }

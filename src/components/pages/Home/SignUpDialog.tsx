@@ -1,27 +1,27 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
 import Box from '@material-ui/core/Box'
 import Typography from '@material-ui/core/Typography'
 import Alert from '@material-ui/lab/Alert'
-import { Field, Form, Formik, FormikProps } from 'formik'
+import { Field, Form, Formik, FormikHelpers, FormikProps } from 'formik'
 // @ts-ignore
 import * as Yup from 'yup'
-import { signUp } from '../../../store/async-actions/AuthActions'
-import CoolButton, { Color } from '../../CoolButton'
 import Dialog from '../../Dialog'
 import UserInfo from '../../../types/UserInfo'
 import { UserCredential } from '../../../types/UserCredential'
-import { useAppDispatch, useAppSelector } from '../../../store/hooks/hooks'
-import { AuthActions, selectAuth } from '../../../store/slice/AuthSlice'
-
+import { useFirebase } from 'react-redux-firebase'
 
 export interface NewUser extends UserInfo, UserCredential {}
 
-const SignUp = () => {
-  const formRef = useRef<FormikProps<UserCredential>>(null)
-  const {authError, isSignUpOpened} = useAppSelector(selectAuth)
-  const dispatch = useAppDispatch()
+interface SignUpDialogProps {
+  closeCallback: () => void
+}
+
+const SignUpDialog = ({ closeCallback }: SignUpDialogProps) => {
+  const formRef = useRef<FormikProps<NewUser>>(null)
+  const [authError, setAuthError] = useState<string>('')
+  const firebase = useFirebase()
 
   const handleSubmit = () => {
     // on success it'll automatically close dialog and clear error state
@@ -32,10 +32,32 @@ const SignUp = () => {
 
   const handleClose = () => {
     // close dialog
-    dispatch(AuthActions.closeSignUpForm())
+    closeCallback()
     // reset form fields to initial state
     if (formRef.current) {
       formRef.current.resetForm()
+    }
+  }
+
+  const signUpAction = async (
+    user: NewUser,
+    actions: FormikHelpers<NewUser>
+  ) => {
+    try {
+      await firebase.createUser(
+        {
+          email: user.email,
+          password: user.password
+        },
+        {
+          ...user
+        } as UserInfo
+      )
+      // clear `erroneous` fields
+      actions.setFieldValue('password', '')
+      actions.setTouched({ password: false })
+    } catch (e) {
+      setAuthError(e instanceof Error ? e.message : 'Failed to sign up!')
     }
   }
 
@@ -44,22 +66,18 @@ const SignUp = () => {
       <Formik
         /* @ts-ignore */
         innerRef={formRef}
-        initialValues={{
-          email: '',
-          password: '',
-          fname: '',
-          sname: '',
-          dob: '',
-          location: '',
-          bio: ''
-        } as NewUser}
-        onSubmit={(values, actions) => {
-          // on success it'll automatically close dialog and clear error state, else it'll keep dialog opened with error
-          signUp(values)
-          // clear `errorness` fields
-          actions.setFieldValue('password', '')
-          actions.setTouched({ password: false })
-        }}
+        initialValues={
+          {
+            email: '',
+            password: '',
+            fname: '',
+            sname: '',
+            dob: '',
+            location: '',
+            bio: ''
+          } as NewUser
+        }
+        onSubmit={signUpAction}
         validationSchema={Yup.object().shape({
           email: Yup.string()
             .email('Invalid email!')
@@ -179,21 +197,13 @@ const SignUp = () => {
   }
 
   return (
-    <>
-      <CoolButton color={Color.BLUE} onClick={() => dispatch(AuthActions.openSignUpForm())}>
-        Sign Up
-      </CoolButton>
-
-      {isSignUpOpened && (
-        <Dialog
-          title="Please, Sign Up"
-          body={resolveBody()}
-          buttons={resolveButtons()}
-          closeDialog={() => dispatch(AuthActions.closeSignUpForm())}
-        />
-      )}
-    </>
+    <Dialog
+      title="Please, Sign Up"
+      body={resolveBody()}
+      buttons={resolveButtons()}
+      closeDialog={handleClose}
+    />
   )
 }
 
-export default SignUp
+export default SignUpDialog

@@ -1,23 +1,32 @@
 import { combineReducers } from 'redux'
-import { firebaseReducer, FirebaseReducer, getFirebase } from 'react-redux-firebase'
-import { createFirestoreInstance, firestoreReducer, getFirestore } from 'redux-firestore'
+import {
+  firebaseReducer,
+  FirebaseReducer,
+  getFirebase
+} from 'react-redux-firebase'
+import {
+  createFirestoreInstance,
+  firestoreReducer,
+  getFirestore
+} from 'redux-firestore'
 import firebase from '../config/FirebaseConfig'
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit'
-import authReducer from './slice/AuthSlice'
 import modalReducer from './slice/ModalSlice'
 import UserInfo, { USERINFO_COLLECTION_NAME } from '../types/UserInfo'
 
-const typedFirebaseReducer: <UserType,
-  Schema extends Record<string, Record<string | number, string | number>>>(state: any, action: any) =>
-  FirebaseReducer.Reducer<UserInfo, Schema> = firebaseReducer
+const typedFirebaseReducer: <
+  UserType,
+  Schema extends Record<string, Record<string | number, string | number>>
+>(
+  state: any,
+  action: any
+) => FirebaseReducer.Reducer<UserInfo, Schema> = firebaseReducer
 
 const rootReducer = combineReducers({
-  auth: authReducer,
   modal: modalReducer,
   firestore: firestoreReducer,
   firebase: typedFirebaseReducer
 })
-
 
 const store = configureStore({
   reducer: rootReducer,
