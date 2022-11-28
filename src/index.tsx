@@ -10,9 +10,12 @@ import * as serviceWorker from './serviceWorker'
 import CircularProgress from './components/CircularProgress'
 import { useAppSelector } from './store/hooks/hooks'
 
+interface IAuthIsLoaded {
+  children: JSX.Element
+}
+
 // This function: prevents from flickering while firebase auth module loading
-// @ts-ignore
-function AuthIsLoaded({ children }) {
+function AuthIsLoaded({ children }: IAuthIsLoaded): JSX.Element {
   const auth = useAppSelector((state) => state.firebase.auth)
   if (!isLoaded(auth)) {
     return <CircularProgress />
