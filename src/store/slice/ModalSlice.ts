@@ -2,7 +2,7 @@ import { Modal } from '../../types/Modal'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '../store'
 
-const initialState : Modal = {
+const initialState: Modal = {
   isOpen: false,
   title: '',
   message: ''
@@ -21,9 +21,10 @@ export const ModalSlice = createSlice({
     openErrorModal: (state, action: PayloadAction<Error | unknown>) => {
       state.isOpen = true
       state.title = 'Sorry, an error occurred'
-      state.message = (action.payload instanceof Error) ? action.payload.message : ''
+      state.message =
+        action.payload instanceof Error ? action.payload.message : ''
     },
-    closeModal: state => {
+    closeModal: (state) => {
       state.isOpen = false
       state.title = ''
       state.message = ''

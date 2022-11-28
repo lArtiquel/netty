@@ -4,7 +4,7 @@ import Button from '@material-ui/core/Button'
 
 export enum Color {
   BLUE,
-  RED,
+  RED
 }
 
 const useStyles = makeStyles({

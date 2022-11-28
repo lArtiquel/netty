@@ -59,14 +59,17 @@ export default function UserCredentialsForm() {
 
         await user.updatePassword(userCreds.password)
 
-        dispatch(ModalActions.openSuccessModal('User credentials were successfully updated!'))
+        dispatch(
+          ModalActions.openSuccessModal(
+            'User credentials were successfully updated!'
+          )
+        )
       } else {
         throw new Error('User is not signed in!')
       }
     } catch (e) {
       dispatch(ModalActions.openErrorModal(e))
     }
-
   }
 
   return (

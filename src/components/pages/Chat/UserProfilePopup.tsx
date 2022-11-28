@@ -39,35 +39,34 @@ export default function UserProfilePopup(props: UserProfilePopupProps) {
 
   const firestore = useFirestore()
 
-  const [userProfile, setUserProfile] = useState<IUserProfilePopupState>(
-    {
-      isLoading: false,
-      isError: false,
-      data: {
-        fname: '',
-        sname: '',
-        photoURL: '',
-        dob: '',
-        location: '',
-        bio: ''
-      }
-    })
+  const [userProfile, setUserProfile] = useState<IUserProfilePopupState>({
+    isLoading: false,
+    isError: false,
+    data: {
+      fname: '',
+      sname: '',
+      photoURL: '',
+      dob: '',
+      location: '',
+      bio: ''
+    }
+  })
 
   /**
    * Load user data by id for displaying in profile popup.
    */
   useEffect(() => {
-    (async () => {
+    ;(async () => {
       try {
         setUserProfile({
           ...userProfile,
           isLoading: true
         })
 
-        const userDoc = await firestore
+        const userDoc = (await firestore
           .collection(USERINFO_COLLECTION_NAME)
           .doc(props.userId)
-          .get() as DocumentSnapshot<UserInfo>
+          .get()) as DocumentSnapshot<UserInfo>
 
         if (userDoc.exists) {
           setUserProfile({
@@ -90,7 +89,6 @@ export default function UserProfilePopup(props: UserProfilePopupProps) {
         })
       }
     })()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const resolveTitle = () => {
@@ -103,8 +101,7 @@ export default function UserProfilePopup(props: UserProfilePopupProps) {
   }
 
   const resolveBody = () => {
-    if (userProfile.isLoading || userProfile.isError)
-      return <CircularProgress />
+    if (userProfile.isLoading || userProfile.isError) return <CircularProgress />
 
     return (
       <>
@@ -146,7 +143,8 @@ export default function UserProfilePopup(props: UserProfilePopupProps) {
               }}
               defaultValue={
                 userProfile.data.location
-                  ? userProfile.data.location : 'Location is not specified.'
+                  ? userProfile.data.location
+                  : 'Location is not specified.'
               }
             />
           </Box>
@@ -164,9 +162,7 @@ export default function UserProfilePopup(props: UserProfilePopupProps) {
             readOnly: true
           }}
           defaultValue={
-            userProfile.data.bio
-              ? userProfile.data.bio
-              : 'No biography for now.'
+            userProfile.data.bio ? userProfile.data.bio : 'No biography for now.'
           }
           multiline
           minRows={5}
@@ -178,7 +174,11 @@ export default function UserProfilePopup(props: UserProfilePopupProps) {
   const resolveButtons = () => {
     return (
       <>
-        <Button variant="contained" onClick={props.closeCallback} color="secondary">
+        <Button
+          variant="contained"
+          onClick={props.closeCallback}
+          color="secondary"
+        >
           Close
         </Button>
       </>
@@ -186,11 +186,11 @@ export default function UserProfilePopup(props: UserProfilePopupProps) {
   }
 
   return (
-      <Dialog
-        title={resolveTitle()}
-        body={resolveBody()}
-        buttons={resolveButtons()}
-        closeDialog={props.closeCallback}
-      />
+    <Dialog
+      title={resolveTitle()}
+      body={resolveBody()}
+      buttons={resolveButtons()}
+      closeDialog={props.closeCallback}
+    />
   )
 }

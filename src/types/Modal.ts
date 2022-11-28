@@ -1,5 +1,5 @@
 export interface Modal {
-  isOpen: boolean,
-  title: string,
+  isOpen: boolean
+  title: string
   message: string
 }

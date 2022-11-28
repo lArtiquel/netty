@@ -4,22 +4,32 @@ import InfiniteScroll from '../../InfiniteScroll'
 import CircularProgress from '../../CircularProgress'
 import Message from './Message'
 import { useFirestore } from 'react-redux-firebase'
-import { CHAT_COLLECTION_NAME, ChatMessage, NETTY_GLOBAL_CHAT_NAME } from '../../../types/ChatCollection'
+import {
+  CHAT_COLLECTION_NAME,
+  ChatMessage,
+  NETTY_GLOBAL_CHAT_NAME
+} from '../../../types/ChatCollection'
 import { ChatConfig } from '../../../config/AppConfig'
 import UIMessage from '../../../types/UIMessage'
-import { DocumentChange, DocumentSnapshot } from '@firebase/firestore-types'
+import {
+  DocumentChange,
+  DocumentData,
+  DocumentSnapshot,
+  QueryDocumentSnapshot
+} from '@firebase/firestore-types'
 import UserInfo, { USERINFO_COLLECTION_NAME } from '../../../types/UserInfo'
-import { QueryDocumentSnapshot, DocumentData } from '@firebase/firestore-types'
 
-const useStyles = makeStyles(() => createStyles({
-  messageStackWrapper: {
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column-reverse',
-    overflow: 'auto', // message stack has it's own scroll bar
-    padding: '16px'
-  }
-}))
+const useStyles = makeStyles(() =>
+  createStyles({
+    messageStackWrapper: {
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column-reverse',
+      overflow: 'auto', // message stack has it's own scroll bar
+      padding: '16px'
+    }
+  })
+)
 
 interface MessageStackProps {
   anchor: MutableRefObject<HTMLDivElement | null>
@@ -47,12 +57,15 @@ export default function MessageStack({ anchor }: MessageStackProps) {
    * @param msgDoc current message doc
    * @param newMessages array of UIMessages
    */
-  async function fetchAdditionalUIMessageParamsAndPushToMessageArray(msgDoc: QueryDocumentSnapshot<DocumentData>, newMessages: UIMessage[]) {
+  async function fetchAdditionalUIMessageParamsAndPushToMessageArray(
+    msgDoc: QueryDocumentSnapshot<DocumentData>,
+    newMessages: UIMessage[]
+  ) {
     const msg = msgDoc.data() as ChatMessage
-    const userInfoDoc = await firestore
+    const userInfoDoc = (await firestore
       .collection(USERINFO_COLLECTION_NAME)
       .doc(msg.userId)
-      .get() as DocumentSnapshot<UserInfo>
+      .get()) as DocumentSnapshot<UserInfo>
     const userInfo = userInfoDoc.data()
     newMessages.push({
       ...msg,
@@ -70,15 +83,16 @@ export default function MessageStack({ anchor }: MessageStackProps) {
     try {
       setBatchMsgsLoading(true)
 
-      const queryWithOffset = isFirstBatchLoading ?
-        universalMessageFetchingQuery :
-        universalMessageFetchingQuery
-          .startAfter(await firestore
-            .collection(CHAT_COLLECTION_NAME)
-            .doc(NETTY_GLOBAL_CHAT_NAME)
-            .collection('messages')
-            .doc(messages[messages.length - 1].id)
-            .get() as DocumentSnapshot<ChatMessage>)
+      const queryWithOffset = isFirstBatchLoading
+        ? universalMessageFetchingQuery
+        : universalMessageFetchingQuery.startAfter(
+            (await firestore
+              .collection(CHAT_COLLECTION_NAME)
+              .doc(NETTY_GLOBAL_CHAT_NAME)
+              .collection('messages')
+              .doc(messages[messages.length - 1].id)
+              .get()) as DocumentSnapshot<ChatMessage>
+          )
 
       const newMessages: UIMessage[] = []
 
@@ -88,11 +102,16 @@ export default function MessageStack({ anchor }: MessageStackProps) {
 
       // loop thru docMsgs, get userInfo and push in array(note: loop executes sequentially)
       for (const msgDoc of docMsgsCollection.docs) {
-        await fetchAdditionalUIMessageParamsAndPushToMessageArray(msgDoc, newMessages)
+        await fetchAdditionalUIMessageParamsAndPushToMessageArray(
+          msgDoc,
+          newMessages
+        )
       }
 
       setMessages(messages.concat(newMessages))
-      setHasMoreMsgs(newMessages.length === ChatConfig.LOAD_MORE_MESSAGES_BATCH_SIZE)
+      setHasMoreMsgs(
+        newMessages.length === ChatConfig.LOAD_MORE_MESSAGES_BATCH_SIZE
+      )
       setFirstBatchLoading(false)
     } catch (error) {
       // todo open error dialog
@@ -106,27 +125,29 @@ export default function MessageStack({ anchor }: MessageStackProps) {
 
   useEffect(() => {
     // load first batch of messages
-    (async () => await loadMoreMessages())()
+    ;(async () => await loadMoreMessages())()
     // subscribe to new messages
-    const subscriptionHandle = universalMessageFetchingQuery
-      .limit(1)
-      .onSnapshot(
-        async (snapshot) => {
-          const newMessages: UIMessage[] = []
-          const changes = snapshot.docChanges() as Array<DocumentChange<ChatMessage>>
+    const subscriptionHandle = universalMessageFetchingQuery.limit(1).onSnapshot(
+      async (snapshot) => {
+        const newMessages: UIMessage[] = []
+        const changes = snapshot.docChanges() as Array<
+          DocumentChange<ChatMessage>
+        >
 
-          for (const change of changes) {
-            if (change.type === 'added') {
-              await fetchAdditionalUIMessageParamsAndPushToMessageArray(change.doc, newMessages)
-            }
+        for (const change of changes) {
+          if (change.type === 'added') {
+            await fetchAdditionalUIMessageParamsAndPushToMessageArray(
+              change.doc,
+              newMessages
+            )
           }
+        }
 
-          setMessages(m => newMessages.concat(m))
-        },
-        (error) => console.log(error.message)
-      )
+        setMessages((m) => newMessages.concat(m))
+      },
+      (error) => console.log(error.message)
+    )
     return () => subscriptionHandle()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const endMessage = (
@@ -152,11 +173,11 @@ export default function MessageStack({ anchor }: MessageStackProps) {
           materialStyle={styles.messageStackWrapper}
         >
           {messages.length &&
-          messages.map((message, index) => (
-            <div key={message.id} ref={!index ? anchor : undefined}>
-              <Message message={message} />
-            </div>
-          ))}
+            messages.map((message, index) => (
+              <div key={message.id} ref={!index ? anchor : undefined}>
+                <Message message={message} />
+              </div>
+            ))}
         </InfiniteScroll>
       )}
     </>

@@ -5,7 +5,8 @@ import { Divider } from '@material-ui/core'
 import MessageInput from './MessageInput'
 import ChatContainer from './ChatContainer'
 
-const useStyles = makeStyles<Theme>((theme: Theme) => createStyles({
+const useStyles = makeStyles<Theme>((theme: Theme) =>
+  createStyles({
     box: {
       display: 'flex',
       flexFlow: 'column',
@@ -24,7 +25,8 @@ const useStyles = makeStyles<Theme>((theme: Theme) => createStyles({
         flex: '0 1 auto'
       }
     }
-  }))
+  })
+)
 
 const Chat = () => {
   const styles = useStyles()

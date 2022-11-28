@@ -4,19 +4,23 @@ import TextField from '@material-ui/core/TextField'
 import SendOutlined from '@material-ui/icons/SendOutlined'
 import Button from '@material-ui/core/Button'
 import { useAppDispatch, useAppSelector } from '../../../store/hooks/hooks'
-import { CHAT_COLLECTION_NAME, ChatMessage, NETTY_GLOBAL_CHAT_NAME } from '../../../types/ChatCollection'
+import {
+  CHAT_COLLECTION_NAME,
+  ChatMessage,
+  NETTY_GLOBAL_CHAT_NAME
+} from '../../../types/ChatCollection'
 import Firebase from 'firebase'
 import { useFirestore } from 'react-redux-firebase'
 import { ModalActions } from '../../../store/slice/ModalSlice'
 
-const INITIAL_STATE = '';
+const INITIAL_STATE = ''
 
 export default function MessageInput() {
   const [message, setMessage] = useState<string>(INITIAL_STATE)
 
   const firestore = useFirestore()
 
-  const userId = useAppSelector(state => state.firebase.auth.uid)
+  const userId = useAppSelector((state) => state.firebase.auth.uid)
   const dispatch = useAppDispatch()
 
   const handleInputChange = (e: { target: { value: string } }) => {

@@ -9,7 +9,7 @@ type Props = {
 
 // A wrapper for <Route> that redirects to the main screen if authenticated
 export const NotSignedOnlyRoute = ({ children, ...rest }: Props) => {
-  const authState = useAppSelector(state => state.firebase.auth)
+  const authState = useAppSelector((state) => state.firebase.auth)
 
   return (
     <Route
@@ -21,7 +21,7 @@ export const NotSignedOnlyRoute = ({ children, ...rest }: Props) => {
           <Redirect
             to={{
               pathname: MESSAGES_PATH, // redirect to /messages path
-              state: { from: location },
+              state: { from: location }
             }}
           />
         )

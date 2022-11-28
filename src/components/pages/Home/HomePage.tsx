@@ -60,10 +60,7 @@ const HomePage = () => {
       </Box>
 
       <Box py={2}>
-        <CoolButton
-          color={Color.BLUE}
-          onClick={() => setSignUpDialogOpen(true)}
-        >
+        <CoolButton color={Color.BLUE} onClick={() => setSignUpDialogOpen(true)}>
           Sign Up
         </CoolButton>
         {isSignUpOpen && (

@@ -9,15 +9,17 @@ import Link from '@material-ui/core/Link'
 import UIMessage from '../../../types/UIMessage'
 import UserProfilePopup from './UserProfilePopup'
 
-const useStyles = makeStyles((theme) => createStyles({
-  avatar: {
-    width: theme.spacing(6),
-    height: theme.spacing(6)
-  },
-  wordWrapper: {
-    overflowWrap: 'anywhere' // wrap long words without spaces
-  }
-}))
+const useStyles = makeStyles((theme) =>
+  createStyles({
+    avatar: {
+      width: theme.spacing(6),
+      height: theme.spacing(6)
+    },
+    wordWrapper: {
+      overflowWrap: 'anywhere' // wrap long words without spaces
+    }
+  })
+)
 
 interface MessageProps {
   message: UIMessage
@@ -86,12 +88,12 @@ export default function Message({ message }: MessageProps) {
           </Box>
         </Paper>
       </Box>
-      {
-        isUserProfileOpen &&
-        <UserProfilePopup userId={message.userId}
-                          closeCallback={() => setUserProfileOpenFlag(false)}
+      {isUserProfileOpen && (
+        <UserProfilePopup
+          userId={message.userId}
+          closeCallback={() => setUserProfileOpenFlag(false)}
         />
-      }
+      )}
     </>
   )
 }

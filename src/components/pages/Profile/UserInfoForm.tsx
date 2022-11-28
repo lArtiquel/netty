@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function UserInfoForm() {
   const profileImageInputRef = useRef<HTMLInputElement>(null)
-  const profile = useAppSelector((state => state.firebase.profile))
+  const profile = useAppSelector((state) => state.firebase.profile)
   const dispatch = useAppDispatch()
   const [userInfo, setUserInfo] = useState(profile)
   const styles = useStyles()
@@ -74,7 +74,9 @@ export default function UserInfoForm() {
             location: userInfo.location,
             bio: userInfo.bio
           })
-        dispatch(ModalActions.openSuccessModal('User info was successfully updated!'))
+        dispatch(
+          ModalActions.openSuccessModal('User info was successfully updated!')
+        )
       } else {
         throw new Error('User is not signed in!')
       }
@@ -117,7 +119,11 @@ export default function UserInfoForm() {
               photoURL: photoUrl
             })
 
-          dispatch(ModalActions.openSuccessModal('Profile image was successfully updated!'))
+          dispatch(
+            ModalActions.openSuccessModal(
+              'Profile image was successfully updated!'
+            )
+          )
         } else {
           throw new Error('User is not signed in!')
         }
@@ -137,92 +143,94 @@ export default function UserInfoForm() {
   }
 
   return (
-      <Box my={3}>
-        <Paper variant="outlined">
-          <Box my={2} mx={3}>
-            {profile.isLoaded ? (
-              <form onSubmit={(e) => updateUserInfo(e)}>
-                <div className={styles.profileImageWrapper}>
-                  <img src={profile.photoURL ?
-                    profile.photoURL :
-                    DEFAULT_USER_PROFILE_PICTURE} alt="Profile pic" />
-                  <input
-                    type="file"
-                    hidden={true}
-                    ref={profileImageInputRef}
-                    onChange={handleImageChange}
-                    accept="image/*"
-                  />
-                  <Tooltip title="Change profile picture" placement="top">
-                    <IconButton
-                      onClick={handleEditPicture}
-                      className="iconButton"
-                    >
-                      <EditIcon color="secondary" />
-                    </IconButton>
-                  </Tooltip>
-                </div>
-                <TextField
-                  autoFocus
-                  margin="dense"
-                  name="fname"
-                  label="First Name"
-                  type="text"
-                  fullWidth
-                  required
-                  onChange={onChange}
-                  value={userInfo.fname}
+    <Box my={3}>
+      <Paper variant="outlined">
+        <Box my={2} mx={3}>
+          {profile.isLoaded ? (
+            <form onSubmit={(e) => updateUserInfo(e)}>
+              <div className={styles.profileImageWrapper}>
+                <img
+                  src={
+                    profile.photoURL
+                      ? profile.photoURL
+                      : DEFAULT_USER_PROFILE_PICTURE
+                  }
+                  alt="Profile pic"
                 />
-                <TextField
-                  margin="dense"
-                  name="sname"
-                  label="Second Name"
-                  type="text"
-                  fullWidth
-                  required
-                  onChange={onChange}
-                  value={userInfo.sname}
+                <input
+                  type="file"
+                  hidden={true}
+                  ref={profileImageInputRef}
+                  onChange={handleImageChange}
+                  accept="image/*"
                 />
-                <TextField
-                  margin="dense"
-                  name="dob"
-                  label="Date of Birth"
-                  type="date"
-                  onChange={onChange}
-                  value={userInfo.dob}
-                  InputLabelProps={{ shrink: true }}
-                />
-                <TextField
-                  margin="dense"
-                  name="location"
-                  label="Location"
-                  type="text"
-                  fullWidth
-                  onChange={onChange}
-                  value={userInfo.location}
-                />
-                <TextField
-                  margin="dense"
-                  name="bio"
-                  label="Biography"
-                  type="text"
-                  multiline
-                  minRows="4"
-                  fullWidth
-                  onChange={onChange}
-                  value={userInfo.bio}
-                />
-                <Box display="flex" justifyContent="center" mt={1}>
-                  <Button type="submit" variant="contained" color="secondary">
-                    Apply Changes
-                  </Button>
-                </Box>
-              </form>
-            ) : (
-              <CircularProgress />
-            )}
-          </Box>
-        </Paper>
-      </Box>
+                <Tooltip title="Change profile picture" placement="top">
+                  <IconButton onClick={handleEditPicture} className="iconButton">
+                    <EditIcon color="secondary" />
+                  </IconButton>
+                </Tooltip>
+              </div>
+              <TextField
+                autoFocus
+                margin="dense"
+                name="fname"
+                label="First Name"
+                type="text"
+                fullWidth
+                required
+                onChange={onChange}
+                value={userInfo.fname}
+              />
+              <TextField
+                margin="dense"
+                name="sname"
+                label="Second Name"
+                type="text"
+                fullWidth
+                required
+                onChange={onChange}
+                value={userInfo.sname}
+              />
+              <TextField
+                margin="dense"
+                name="dob"
+                label="Date of Birth"
+                type="date"
+                onChange={onChange}
+                value={userInfo.dob}
+                InputLabelProps={{ shrink: true }}
+              />
+              <TextField
+                margin="dense"
+                name="location"
+                label="Location"
+                type="text"
+                fullWidth
+                onChange={onChange}
+                value={userInfo.location}
+              />
+              <TextField
+                margin="dense"
+                name="bio"
+                label="Biography"
+                type="text"
+                multiline
+                minRows="4"
+                fullWidth
+                onChange={onChange}
+                value={userInfo.bio}
+              />
+              <Box display="flex" justifyContent="center" mt={1}>
+                <Button type="submit" variant="contained" color="secondary">
+                  Apply Changes
+                </Button>
+              </Box>
+            </form>
+          ) : (
+            <CircularProgress />
+          )}
+        </Box>
+      </Paper>
+    </Box>
   )
 }

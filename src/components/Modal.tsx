@@ -20,13 +20,13 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-interface CustomModalProps  {
+interface CustomModalProps {
   title: ReactNode
-  message: ReactNode,
+  message: ReactNode
   closeModal: () => void
 }
 
-const CustomModal = ({ title, message, closeModal } : CustomModalProps) => {
+const CustomModal = ({ title, message, closeModal }: CustomModalProps) => {
   const classes = useStyles()
 
   const handleClose = () => {

@@ -11,7 +11,7 @@ type Props = {
 // screen if you're not yet authenticated or if auth is not
 // yet loaded
 export const PrivateRoute = ({ children, ...rest }: Props) => {
-  const authState = useAppSelector(state => state.firebase.auth)
+  const authState = useAppSelector((state) => state.firebase.auth)
 
   // todo chek if we need to sync some props to firestore
   // auth.onAuthStateChanged(async (authUser) => {
@@ -47,7 +47,7 @@ export const PrivateRoute = ({ children, ...rest }: Props) => {
           <Redirect
             to={{
               pathname: HOME_PAGE_PATH,
-              state: { from: location },
+              state: { from: location }
             }}
           />
         )
