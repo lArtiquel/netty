@@ -39,7 +39,8 @@
     "lint:fix": "npm run lint -- --fix",
     "prettier": "npx prettier src test --check",
     "prettier:fix": "npm run prettier -- --write",
-    "format": "npm run prettier:fix && npm run lint:fix"
+    "format": "npm run prettier:fix && npm run lint:fix",
+    "prepare": "husky install"
   },
   "browserslist": {
     "production": [
@@ -58,6 +59,14 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react": "^7.31.11",
+    "husky": "^8.0.0",
+    "lint-staged": "^13.0.4",
     "prettier": "^2.8.0"
+  },
+  "lint-staged":{
+    "**/*.{js,jsx,ts,tsx}":[
+      "npx prettier --write",
+      "npx eslint --fix"
+    ]
   }
 }
