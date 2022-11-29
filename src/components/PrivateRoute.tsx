@@ -7,35 +7,12 @@ type Props = {
   children: ReactNode
 } & RouteProps
 
-// A wrapper for <Route> that redirects to the login
-// screen if you're not yet authenticated or if auth is not
-// yet loaded
+/**
+ * A wrapper for <Route> that redirects to the home screen
+ * if user is not yet authenticated
+ */
 export const PrivateRoute = ({ children, ...rest }: Props) => {
   const authState = useAppSelector((state) => state.firebase.auth)
-
-  // todo chek if we need to sync some props to firestore
-  // auth.onAuthStateChanged(async (authUser) => {
-  //   if (!authUser) return
-  //
-  //   const { uid, displayName, email, emailVerified, phoneNumber, photoURL } = authUser
-  //
-  //   const userData = {
-  //     displayName,
-  //     email,
-  //     emailVerified,
-  //     phoneNumber,
-  //     photoURL,
-  //   }
-  //
-  //   try {
-  //     await firestore
-  //       .collection(USERINFO_COLLECTION_NAME)
-  //       .doc(uid as string)
-  //       .set(userData, { merge: true })
-  //   } catch (err) {
-  //     console.log(err)
-  //   }
-  // })
 
   return (
     <Route

@@ -18,6 +18,7 @@ import {
   QueryDocumentSnapshot
 } from '@firebase/firestore-types'
 import UserInfo, { USERINFO_COLLECTION_NAME } from '../../../types/UserInfo'
+import { ModalActions } from '../../../store/slice/ModalSlice'
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -114,10 +115,7 @@ export default function MessageStack({ anchor }: MessageStackProps) {
       )
       setFirstBatchLoading(false)
     } catch (error) {
-      // todo open error dialog
-      // state.modal.isOpen = true
-      // state.modal.title = 'Connection error'
-      // state.modal.message = 'You can not reach the top without connection. Check internet connection and come back later.'
+      ModalActions.openErrorModal(error)
     } finally {
       setBatchMsgsLoading(false)
     }
