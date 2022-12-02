@@ -10,6 +10,7 @@ import Chat from './components/pages/Chat/Chat'
 import { HOME_PAGE_PATH, MESSAGES_PATH, PROFILE_PATH } from './config/AppConfig'
 import { PrivateRoute } from './components/PrivateRoute'
 import { NotSignedOnlyRoute } from './components/NotSignedOnlyRoute'
+import { VerifiedUser } from './components/VerifiedUser'
 
 function App() {
   return (
@@ -23,14 +24,18 @@ function App() {
           <HomePage />
         </NotSignedOnlyRoute>
         <PrivateRoute exact path={PROFILE_PATH}>
-          <PageTemplate page="Profile">
-            <Profile />
-          </PageTemplate>
+          <VerifiedUser>
+            <PageTemplate page="Profile">
+              <Profile />
+            </PageTemplate>
+          </VerifiedUser>
         </PrivateRoute>
         <PrivateRoute exact path={MESSAGES_PATH}>
-          <PageTemplate page="Messages">
-            <Chat />
-          </PageTemplate>
+          <VerifiedUser>
+            <PageTemplate page="Messages">
+              <Chat />
+            </PageTemplate>
+          </VerifiedUser>
         </PrivateRoute>
       </Switch>
     </ThemeProvider>
