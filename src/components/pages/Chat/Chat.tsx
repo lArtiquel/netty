@@ -12,16 +12,16 @@ const useStyles = makeStyles<Theme>((theme: Theme) =>
       flexFlow: 'column',
       height: '100%',
       '& .chatHeader': {
-        margin: '5px 20px',
+        margin: '5px',
         flex: '0 1 auto'
       },
       '& .chatContainer': {
-        margin: '10px 5px',
+        margin: '5px 0px',
         flex: '1 1 auto',
         overflow: 'auto' // that's really important prop, without it flexbox spread outside the viewport
       },
       '& .messageInput': {
-        margin: '10px 0px',
+        margin: '5px 0px',
         flex: '0 1 auto'
       }
     }
