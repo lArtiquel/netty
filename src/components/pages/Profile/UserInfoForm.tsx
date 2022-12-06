@@ -11,7 +11,7 @@ import Tooltip from '@material-ui/core/Tooltip'
 import { useAppDispatch, useAppSelector } from '../../../store/hooks/hooks'
 import { DEFAULT_USER_PROFILE_PICTURE } from '../../../config/AppConfig'
 import { useFirebase, useFirestore } from 'react-redux-firebase'
-import { USERINFO_COLLECTION_NAME } from '../../../types/UserInfo'
+import UserInfo, { USERINFO_COLLECTION_NAME } from '../../../types/UserInfo'
 import { ModalActions } from '../../../store/slice/ModalSlice'
 
 const useStyles = makeStyles((theme) => ({
@@ -70,10 +70,10 @@ export default function UserInfoForm() {
           .update({
             fname: userInfo.fname,
             sname: userInfo.sname,
-            dob: userInfo.dob,
-            location: userInfo.location,
-            bio: userInfo.bio
-          })
+            dob: userInfo.dob || '',
+            location: userInfo.location || '',
+            bio: userInfo.bio || ''
+          } as UserInfo)
         dispatch(
           ModalActions.openSuccessModal('User info was successfully updated!')
         )

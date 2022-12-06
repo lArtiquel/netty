@@ -11,6 +11,9 @@ import Dialog from '../../Dialog'
 import UserInfo from '../../../types/UserInfo'
 import { UserCredential } from '../../../types/UserCredential'
 import { useFirebase } from 'react-redux-firebase'
+import MailIcon from '@material-ui/icons/Mail'
+import { continueWithGoogle } from './Auth'
+import { Divider } from '@material-ui/core'
 
 export interface NewUser extends UserInfo, UserCredential {}
 
@@ -50,7 +53,11 @@ const SignUpDialog = ({ closeCallback }: SignUpDialogProps) => {
           password: user.password
         },
         {
-          ...user
+          fname: user.fname,
+          sname: user.sname,
+          dob: user.dob,
+          location: user.location,
+          bio: user.bio
         } as UserInfo
       )
       // clear `erroneous` fields
@@ -63,123 +70,145 @@ const SignUpDialog = ({ closeCallback }: SignUpDialogProps) => {
 
   const resolveBody = () => {
     return (
-      <Formik
-        /* @ts-ignore */
-        innerRef={formRef}
-        initialValues={
-          {
-            email: '',
-            password: '',
-            fname: '',
-            sname: '',
-            dob: '',
-            location: '',
-            bio: ''
-          } as NewUser
-        }
-        onSubmit={signUpAction}
-        validationSchema={Yup.object().shape({
-          email: Yup.string()
-            .email('Invalid email!')
-            .max(255, 'Too long email!')
-            .required('Please, enter your email!'),
-          password: Yup.string()
-            .min(6, 'Password is too short!')
-            .max(255, 'Password is too long!')
-            .required('Please, enter your password!'),
-          fname: Yup.string().required('Please, enter your first name!'),
-          sname: Yup.string().required('Please, enter your second name!')
-        })}
-        validateOnChange
-        validateOnBlur
-      >
-        {({ errors, touched }) => (
-          <Form>
-            <Box mb={2} borderRadius={8} boxShadow={4}>
-              <Box px={2} py={1}>
-                <Typography align="center" gutterBottom>
-                  Type your credentials
-                </Typography>
-                <Field
-                  as={TextField}
-                  name="email"
-                  label="Email"
-                  type="email"
-                  autoFocus
-                  margin="dense"
-                  fullWidth
-                  error={errors.email && touched.email}
-                  helperText={errors.email && touched.email ? errors.email : ''}
-                />
-                <Field
-                  as={TextField}
-                  name="password"
-                  label="Password"
-                  type="password"
-                  margin="dense"
-                  fullWidth
-                  error={errors.password && touched.password}
-                  helperText={
-                    errors.password && touched.password ? errors.password : ''
-                  }
-                />
-              </Box>
-            </Box>
+      <Box display="flex" justifyContent="center" flexDirection="column">
+        <Box mb={2} alignSelf="center">
+          <Button
+            startIcon={<MailIcon />}
+            onClick={continueWithGoogle}
+            variant="contained"
+          >
+            Continue with Google
+          </Button>
+        </Box>
+        <Divider />
+        <Box my={2} alignSelf="center">
+          <Formik
+            /* @ts-ignore */
+            innerRef={formRef}
+            initialValues={
+              {
+                email: '',
+                password: '',
+                fname: '',
+                sname: '',
+                dob: '',
+                location: '',
+                bio: ''
+              } as NewUser
+            }
+            onSubmit={signUpAction}
+            validationSchema={Yup.object().shape({
+              email: Yup.string()
+                .email('Invalid email!')
+                .max(255, 'Too long email!')
+                .required('Please, enter your email!'),
+              password: Yup.string()
+                .min(6, 'Password is too short!')
+                .max(255, 'Password is too long!')
+                .required('Please, enter your password!'),
+              fname: Yup.string().required('Please, enter your first name!'),
+              sname: Yup.string().required('Please, enter your second name!')
+            })}
+            validateOnChange
+            validateOnBlur
+          >
+            {({ errors, touched }) => (
+              <Form>
+                <Box mb={2} borderRadius={8} boxShadow={4}>
+                  <Box px={2} py={1}>
+                    <Typography align="center" gutterBottom>
+                      Type your credentials
+                    </Typography>
+                    <Field
+                      as={TextField}
+                      name="email"
+                      label="Email"
+                      type="email"
+                      autoFocus
+                      margin="dense"
+                      fullWidth
+                      error={errors.email && touched.email}
+                      helperText={
+                        errors.email && touched.email ? errors.email : ''
+                      }
+                    />
+                    <Field
+                      as={TextField}
+                      name="password"
+                      label="Password"
+                      type="password"
+                      margin="dense"
+                      fullWidth
+                      error={errors.password && touched.password}
+                      helperText={
+                        errors.password && touched.password
+                          ? errors.password
+                          : ''
+                      }
+                    />
+                  </Box>
+                </Box>
 
-            {authError ? <Alert severity="error">{authError}</Alert> : null}
+                {authError ? <Alert severity="error">{authError}</Alert> : null}
 
-            <Box mt={2} borderRadius={8} boxShadow={4}>
-              <Box px={2} py={1}>
-                <Typography align="center" gutterBottom>
-                  Type your personal info
-                </Typography>
-                <Field
-                  as={TextField}
-                  name="fname"
-                  label="First Name"
-                  margin="dense"
-                  fullWidth
-                  error={errors.fname && touched.fname}
-                  helperText={errors.fname && touched.fname ? errors.fname : ''}
-                />
-                <Field
-                  as={TextField}
-                  name="sname"
-                  label="Second Name"
-                  margin="dense"
-                  fullWidth
-                  error={errors.sname && touched.sname}
-                  helperText={errors.sname && touched.sname ? errors.sname : ''}
-                />
-                <Field
-                  as={TextField}
-                  name="dob"
-                  label="Date of birth"
-                  type="date"
-                  margin="dense"
-                  InputLabelProps={{ shrink: true }}
-                />
-                <Field
-                  as={TextField}
-                  name="location"
-                  label="Location"
-                  margin="dense"
-                  fullWidth
-                />
-                <Field
-                  as={TextField}
-                  name="bio"
-                  label="Tell us about yourself"
-                  margin="dense"
-                  fullWidth
-                  multiline
-                  rows="5"
-                />
-              </Box>
-            </Box>
-          </Form>
-        )}
-      </Formik>
+                <Box mt={2} borderRadius={8} boxShadow={4}>
+                  <Box px={2} py={1}>
+                    <Typography align="center" gutterBottom>
+                      Type your personal info
+                    </Typography>
+                    <Field
+                      as={TextField}
+                      name="fname"
+                      label="First Name"
+                      margin="dense"
+                      fullWidth
+                      error={errors.fname && touched.fname}
+                      helperText={
+                        errors.fname && touched.fname ? errors.fname : ''
+                      }
+                    />
+                    <Field
+                      as={TextField}
+                      name="sname"
+                      label="Second Name"
+                      margin="dense"
+                      fullWidth
+                      error={errors.sname && touched.sname}
+                      helperText={
+                        errors.sname && touched.sname ? errors.sname : ''
+                      }
+                    />
+                    <Field
+                      as={TextField}
+                      name="dob"
+                      label="Date of birth"
+                      type="date"
+                      margin="dense"
+                      InputLabelProps={{ shrink: true }}
+                    />
+                    <Field
+                      as={TextField}
+                      name="location"
+                      label="Location"
+                      margin="dense"
+                      fullWidth
+                    />
+                    <Field
+                      as={TextField}
+                      name="bio"
+                      label="Tell us about yourself"
+                      margin="dense"
+                      fullWidth
+                      multiline
+                      minRows="5"
+                    />
+                  </Box>
+                </Box>
+              </Form>
+            )}
+          </Formik>
+        </Box>
+      </Box>
     )
   }
 
