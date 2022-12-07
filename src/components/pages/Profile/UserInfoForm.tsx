@@ -67,13 +67,16 @@ export default function UserInfoForm() {
         await firestore
           .collection(USERINFO_COLLECTION_NAME)
           .doc(`${user.uid}`)
-          .update({
-            fname: userInfo.fname,
-            sname: userInfo.sname,
-            dob: userInfo.dob || '',
-            location: userInfo.location || '',
-            bio: userInfo.bio || ''
-          } as UserInfo)
+          .set(
+            {
+              fname: userInfo.fname,
+              sname: userInfo.sname,
+              dob: userInfo.dob || '',
+              location: userInfo.location || '',
+              bio: userInfo.bio || ''
+            } as UserInfo,
+            { merge: true }
+          )
         dispatch(
           ModalActions.openSuccessModal('User info was successfully updated!')
         )
